@@ -22,8 +22,23 @@ Before the first content request in a session, check if the user's niche is behi
 ## Flow
 
 ```
-Request → Research → Write → Voice Pass → Anti-AI Pass → Quality Gate → Output
+Request → Dedup Check → Research → Write → Voice Pass → Anti-AI Pass → Quality Gate → Output
 ```
+
+---
+
+## Step 0: Dedup Check
+
+**Runs immediately after receiving a content request — before any research or web search.**
+
+1. Identify the topic/slug the user is asking about.
+2. Scan `posts/` for the current month's folder.
+3. If a post with a similar slug or overlapping topic already exists, **stop and inform the user** before doing anything else:
+   - List the existing post(s) that overlap.
+   - Ask: proceed anyway, find a fresh angle, or pick a different topic?
+4. Only continue to Step 1 (Research) if the user confirms or no duplicate is found.
+
+**Why this runs first:** Web search and research cost time and tokens. Don't spend either on a topic that's already been covered unless the user explicitly wants a new angle.
 
 ---
 
@@ -121,10 +136,6 @@ The post must pass ALL gates to be published. If it fails any gate, revise and r
 5. Present the final post to the user for approval
 
 ---
-
-## Dedup Check
-
-Before writing, check existing posts in `posts/` for the current month. If a post with a similar slug or topic already exists, inform the user and ask if they want to proceed or pick a different angle.
 
 ---
 

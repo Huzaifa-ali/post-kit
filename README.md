@@ -138,7 +138,7 @@ Say any of these:
 | "Help me improve my hooks" | Brainstorms better opening lines with you |
 | "Repurpose this for X" | Adapts a LinkedIn post for Twitter format |
 
-Every post goes through: **Research → Write → Voice Match → Anti-AI Filter → Quality Gate → Output.** You get a publish-ready post that sounds like you wrote it.
+Every post goes through: **Dedup Check → Research → Write → Voice Match → Anti-AI Filter → Quality Gate → Output.** If you've already posted about a topic this month, it flags it before wasting time on research.
 
 ---
 
@@ -146,21 +146,23 @@ Every post goes through: **Research → Write → Voice Match → Anti-AI Filter
 
 ```mermaid
 graph LR
-    A[Research] --> B[Write]
-    B --> C[Voice Pass]
-    C --> D[Anti-AI Pass]
-    D --> E[Quality Gate]
-    E --> F[Output]
+    A[Dedup Check] --> B[Research]
+    B --> C[Write]
+    C --> D[Voice Pass]
+    D --> E[Anti-AI Pass]
+    E --> F[Quality Gate]
+    F --> G[Output]
 ```
 
 Every post goes through this pipeline automatically:
 
-1. **Research** — Multi-angle web search with intent classification, source triage, and cross-validation (powered by `engine/core/web-research.md`)
-2. **Write** — Drafts following your content rules (length, structure, hooks)
-3. **Voice Pass** — Rewrites to match YOUR voice profile
-4. **Anti-AI Pass** — Strips banned words, AI patterns, robotic structure _(mandatory, always on)_
-5. **Quality Gate** — Checks hook strength, one-idea rule, save/share test, platform compliance
-6. **Output** — Saves to `posts/` with metadata, ready to publish
+1. **Dedup Check** — Scans existing posts for the month, flags if you've already covered the topic (runs before any research)
+2. **Research** — Multi-angle web search with intent classification, source triage, and cross-validation (powered by `engine/core/web-research.md`)
+3. **Write** — Drafts following your content rules (length, structure, hooks)
+4. **Voice Pass** — Rewrites to match YOUR voice profile
+5. **Anti-AI Pass** — Strips banned words, AI patterns, robotic structure _(mandatory, always on)_
+6. **Quality Gate** — Checks hook strength, one-idea rule, save/share test, platform compliance
+7. **Output** — Saves to `posts/` with metadata, ready to publish
 
 ---
 
