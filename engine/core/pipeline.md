@@ -29,37 +29,64 @@ Request → Dedup Check → Research → Write → Voice Pass → Anti-AI Pass �
 
 ## Step 0: Dedup Check
 
-**Runs immediately after receiving a content request — before any research or web search.**
+**Runs for every content request — before any research or writing.**
 
-1. Identify the topic/slug the user is asking about.
-2. Scan `posts/` for the current month's folder.
-3. If a post with a similar slug or overlapping topic already exists, **stop and inform the user** before doing anything else:
-   - List the existing post(s) that overlap.
-   - Ask: proceed anyway, find a fresh angle, or pick a different topic?
-4. Only continue to Step 1 (Research) if the user confirms or no duplicate is found.
+### What to do:
 
-**Why this runs first:** Web search and research cost time and tokens. Don't spend either on a topic that's already been covered unless the user explicitly wants a new angle.
+1. **Find the user's posts folder.** Read `my-niche/niche.yaml` and check for an `output` field:
+   - If `output.path` is defined, use that as the posts root folder (e.g., `content/linkedin/`)
+   - If no `output` field exists, default to `posts/`
+   - The folder naming follows `output.structure` if set, otherwise defaults to `YYYY-month/YYYY-MM-DD-slug/`
+
+2. **List the current month's post folders.** Get all folder names for this month. Keep this list in context for the rest of the pipeline.
+
+3. **If the user gave a specific topic:** check the list now. A post is a DUPLICATE only if it covers the **same subject AND same angle**. It is NOT a duplicate if:
+   - Same broad category but different subject (e.g., two different tools, two different people)
+   - Same subject but different angle (e.g., "tool-X-launch" vs "tool-X-pricing-change" vs "tool-X-tutorial")
+   - Same topic area but different news/event
+   - A follow-up or new development on a prior story
+   
+   If duplicate found → stop and inform the user. Ask: proceed anyway, find a fresh angle, or pick a different topic?
+
+4. **If the user is scouting** ("what's trending", "what's new today", etc.): proceed to Step 1 with the existing posts list loaded. Use it to filter out already-covered topics from scout results before presenting candidates.
+
+### Important:
+- This check uses folder names only — do NOT read every post file. Slug-based matching is sufficient.
+- When in doubt (borderline overlap), proceed and note it briefly rather than blocking the user.
+- This check prevents self-repetition within the same month.
 
 ---
 
 ## Step 1: Research
 
-**Skip if:** the user provides a specific topic with enough context, or news-scout module is not active.
+**This step ALWAYS runs unless the user provides a complete, self-contained topic with all facts included.**
 
-**Run if:** user says "what's trending", "find me something to post about", or the topic needs current data.
+### When to SKIP research:
+- User pastes a full article/link and says "write about this" (they've done the research)
+- User provides specific facts, numbers, and context in their request
+- The topic is purely opinion-based and needs no external data
 
-**If the user asks "what's trending" / "find me topics" / "what should I post about":** run **The Daily Scout Command** defined in `my-niche/news-scout.md` — follow the candidate composition and presentation rules defined there, then let the user pick which to write.
+### When to RUN research (default — if in doubt, research):
+- User gives a topic name without full context (e.g., "write about [topic]")
+- User says "what's trending", "find me something to post about", "what's new today"
+- Topic involves current events, numbers, dates, or claims that need verification
+- News-based content — always verify freshness and accuracy before writing
 
-**How to research — follow `engine/core/web-research.md`:**
+### How to research:
 
-The web-research module handles all search strategy. It will:
-1. Classify the research intent (quick fact vs deep investigation)
-2. Run multi-angle searches (direct + community + authoritative)
-3. Triage sources by quality, recency, and cross-validation
-4. Fetch and extract key passages from top sources
-5. Synthesize findings into content-ready format (what happened → why it matters → the angle)
+**Follow `engine/core/web-research.md` for the full search strategy.** The key steps:
 
-**Additional source checks:**
+1. **Actually run web searches.** Do not skip this. Use the search tool to query for the topic.
+2. Classify the research intent (quick fact vs deep investigation)
+3. Run multi-angle searches (direct + community + authoritative)
+4. Triage sources by quality, recency, and cross-validation
+5. Fetch and extract key passages from top sources
+6. Synthesize findings into content-ready format (what happened → why it matters → the angle)
+
+### If the user asks "what's trending" / "find me topics" / "what should I post about":
+Run **The Daily Scout Command** defined in `my-niche/news-scout.md` — follow the candidate composition and presentation rules defined there, then let the user pick which to write.
+
+### Additional source checks:
 - Check the user's `sources.md` for where to look (subreddits, feeds, communities)
 - Cross-validate: a topic is worth posting about if it appears in 2+ independent sources
 - Score urgency:
@@ -67,7 +94,9 @@ The web-research module handles all search strategy. It will:
    - Trending this week → post within 2-3 days
    - Evergreen → queue for whenever
 
-Present research findings to the user. Let them pick or direct you.
+### After research:
+- If the user gave a specific topic: proceed directly to Step 2 (Write) with the researched facts
+- If scouting/exploring: filter candidates against the existing posts list from Step 0, present only fresh topics, let user pick → proceed to Step 2
 
 ---
 
@@ -126,14 +155,14 @@ The post must pass ALL gates to be published. If it fails any gate, revise and r
 
 ## Step 6: Output
 
-1. Create the output folder: `posts/YYYY-month/YYYY-MM-DD-slug/`
-   - **No subfolders** inside the month folder (no `daily/`, `news/`, `github/`)
+1. **Use the same output path resolved in Step 0 (Dedup Check).** The posts root and folder structure were already determined from `my-niche/niche.yaml` at the start of the pipeline. Default: `posts/YYYY-month/YYYY-MM-DD-slug/`.
+2. Create the output folder following that structure.
+   - **No extra subfolders** inside the month folder (no `daily/`, `news/`, `github/`)
    - Every post goes flat inside the month, identified by its date-slug folder
-   - Example: `posts/2026-july/2026-07-14-slug/linkedin-post.md`
-2. Save the post as `linkedin-post.md` (or `x-post.md` if platform-specific)
-3. If image-prompts module is active, include 3 AI image prompts in the post file
-4. If github-screenshot module is active and this is a repo post, capture/provide screenshot
-5. Present the final post to the user for approval
+3. Save the post as `linkedin-post.md` (or `x-post.md` if platform-specific)
+4. If image-prompts module is active, include 3 AI image prompts in the post file
+5. If github-screenshot module is active and this is a repo post, capture/provide screenshot
+6. Present the final post to the user for approval
 
 ---
 

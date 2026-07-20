@@ -48,3 +48,8 @@ modules_active:
   - memes
   - news-scout
   - image-prompts
+
+# Output configuration (optional — omit to use defaults)
+# output:
+#   path: "posts/"                          # Root folder for saved posts (default: posts/)
+#   structure: "YYYY-month/YYYY-MM-DD-slug/" # Folder naming pattern (default shown)
