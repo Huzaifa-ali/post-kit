@@ -84,6 +84,11 @@ If you're not sure, just tell me your niche and I'll suggest some."
 ### Question 10: Timezone
 "What timezone are you in? (e.g., EST, GMT, Asia/Karachi)"
 
+### Question 11: Output Folder
+"Where do you want posts saved? The default is `posts/YYYY-month/YYYY-MM-DD-slug/`.
+
+If you have an existing content folder or prefer a different structure, tell me. Otherwise just say 'default'."
+
 ---
 
 ## After All Answers
@@ -91,7 +96,7 @@ If you're not sure, just tell me your niche and I'll suggest some."
 Generate the following files in `my-niche/`:
 
 ### Always generate:
-- `niche.yaml` — from answers 1, 3, 4, 9, 10. **Always include `postkit_version`** at the top of the file, set to the current version from the `VERSION` file at the project root. This enables the update system to detect when the user's niche was last synced.
+- `niche.yaml` — from answers 1, 3, 4, 9, 10, 11. **Always include `postkit_version`** at the top of the file, set to the current version from the `VERSION` file at the project root. This enables the update system to detect when the user's niche was last synced. Include an `output` field with `path` and `structure` if the user chose a non-default setup (omit the field entirely if they said "default").
 - `voice.md` — from answer 2
 - `content-rules.md` — from answers 4, 7 (structure, length, hooks based on their style)
 - `sources.md` — from answer 8
