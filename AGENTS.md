@@ -18,8 +18,16 @@ Check if `my-niche/niche.yaml` exists.
 For every content request, follow `engine/core/pipeline.md`:
 
 ```
-Research → Write → Voice Pass → Anti-AI Pass → Quality Gate → Output
+Dedup Check (FIRST — before anything else) → Research → Write → Voice Pass → Anti-AI Pass → Quality Gate → Output
 ```
+
+### ⛔ CRITICAL: Dedup runs BEFORE research
+The very first action for ANY content request (including "what's trending") is:
+1. Read `my-niche/niche.yaml` → resolve output path (`output.path`, defaults to `../posts`)
+2. LIST the current month's posts folder (e.g., `posts/2026-july/`) — actually list it, get all folder names
+3. Load that list into context
+
+**Do NOT run any web search or fetch any URL until you have completed step 2 above.** This is a hard gate.
 
 ### Files to read before writing any content:
 1. `my-niche/niche.yaml` — user's identity and pillars
