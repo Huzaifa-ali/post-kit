@@ -27,33 +27,53 @@ Request → Dedup Check → Research → Write → Voice Pass → Anti-AI Pass �
 
 ---
 
+## ⛔ HARD GATE: Dedup Check MUST Complete Before Research
+
+**YOU ARE FORBIDDEN FROM RUNNING ANY WEB SEARCH, FETCHING ANY URL, OR STARTING RESEARCH UNTIL STEP 0 IS FULLY COMPLETE.**
+
+This is not a suggestion. This is a hard execution gate. The sequence is:
+1. Read niche.yaml to resolve output path
+2. LIST the current month's folder (actually call the directory listing tool)
+3. Load the folder list into context
+4. ONLY THEN proceed to Step 1 (Research)
+
+If you find yourself wanting to search the web before listing the posts folder — STOP. You are out of order. Go back and list the posts folder first.
+
+---
+
 ## Step 0: Dedup Check
 
-**Runs for every content request — before any research or writing.**
+**Runs for every content request — before any research or writing. NEVER SKIP THIS STEP.**
 
 ### What to do:
 
-1. **Find the user's posts folder.** Read `my-niche/niche.yaml` and check for an `output` field:
-   - If `output.path` is defined, use that as the posts root folder (e.g., `content/linkedin/`)
-   - If no `output` field exists, default to `posts/`
+1. **Find the user's posts folder (MANDATORY).** Read `my-niche/niche.yaml` and check for an `output` field:
+   - If `output.path` is defined, resolve it RELATIVE TO the `post-kit/` directory (e.g., `../posts` means the `posts/` folder one level above `post-kit/`)
+   - If no `output` field exists, check BOTH `posts/` (relative to workspace root) AND `../posts` (relative to post-kit). Use whichever exists.
    - The folder naming follows `output.structure` if set, otherwise defaults to `YYYY-month/YYYY-MM-DD-slug/`
 
-2. **List the current month's post folders.** Get all folder names for this month. Keep this list in context for the rest of the pipeline.
+2. **List the current month's post folders (MANDATORY).** Get ALL folder names for this month. ACTUALLY LIST THE DIRECTORY — do not assume it's empty. Keep this full list in context for the rest of the pipeline.
 
-3. **If the user gave a specific topic:** check the list now. A post is a DUPLICATE only if it covers the **same subject AND same angle**. It is NOT a duplicate if:
+3. **If the user gave a specific topic:** check the list now. A post is a DUPLICATE if:
+   - The slug contains the same core subject keyword(s) AND the same angle/framing
+   - Two folders on the same date cover the same theme (even with slightly different slugs)
+   - The topic was posted within the last 3 days (unless it's genuinely new news on the same subject)
+   
+   It is NOT a duplicate if:
    - Same broad category but different subject (e.g., two different tools, two different people)
-   - Same subject but different angle (e.g., "tool-X-launch" vs "tool-X-pricing-change" vs "tool-X-tutorial")
+   - Same subject but genuinely different angle (e.g., "tool-X-launch" vs "tool-X-pricing-change")
    - Same topic area but different news/event
-   - A follow-up or new development on a prior story
+   - A follow-up with substantial new information (not just a reframe)
    
    If duplicate found → stop and inform the user. Ask: proceed anyway, find a fresh angle, or pick a different topic?
 
-4. **If the user is scouting** ("what's trending", "what's new today", etc.): proceed to Step 1 with the existing posts list loaded. Use it to filter out already-covered topics from scout results before presenting candidates.
+4. **If the user is scouting** ("what's trending", "what's new today", etc.): proceed to Step 1 with the existing posts list loaded. **ACTIVELY FILTER** scout results against this list — remove any topic that matches an existing slug's subject before presenting candidates. If a candidate overlaps with a recent post, either drop it silently or mark it as "⚠️ already covered on [date]" so the user can decide.
 
 ### Important:
 - This check uses folder names only — do NOT read every post file. Slug-based matching is sufficient.
-- When in doubt (borderline overlap), proceed and note it briefly rather than blocking the user.
+- When in doubt (borderline overlap), FLAG IT to the user rather than silently proceeding.
 - This check prevents self-repetition within the same month.
+- **If you cannot locate the posts folder or it appears empty, SAY SO.** Do not silently skip dedup.
 
 ---
 
