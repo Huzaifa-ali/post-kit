@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — post-kit{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <p class="text-gray-500 mt-1">{% if niche %}{{ niche.name }} · {% endif %}{{ total_posts }} posts generated</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+            <p class="text-2xl font-bold text-gray-900">{{ total_posts }}</p>
+            <p class="text-xs text-gray-500 mt-1">Posts</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+            <p class="text-2xl font-bold text-gray-900">{{ active_modules|length }}</p>
+            <p class="text-xs text-gray-500 mt-1">Modules</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+            <p class="text-2xl font-bold text-gray-900">{{ niche.platforms|length if niche and niche.platforms else 0 }}</p>
+            <p class="text-xs text-gray-500 mt-1">Platforms</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+            <p class="text-2xl font-bold text-gray-900">{{ niche.content_pillars|length if niche and niche.content_pillars else 0 }}</p>
+            <p class="text-xs text-gray-500 mt-1">Pillars</p>
+        </div>
+    </div>
+
+    <!-- Recent Posts -->
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-semibold text-gray-900">Recent Posts</h2>
+            {% if recent_posts %}<a href="/posts" class="text-sm text-brand-600 hover:text-brand-700 font-medium">All posts →</a>{% endif %}
+        </div>
+
+        {% if recent_posts %}
+        <div class="space-y-3">
+            {% for post in recent_posts %}
+            <a href="/posts/{{ post.id }}" class="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-200">
+                <div class="min-w-0 flex-1">
+                    <p class="text-sm font-medium text-gray-900 truncate">{{ post.topic }}</p>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-xs text-gray-400">{{ post.platform }}</span>
+                        <span class="text-xs text-gray-300">·</span>
+                        <span class="text-xs text-gray-400">via {{ post.cli_tool }}</span>
+                        <span class="text-xs text-gray-300">·</span>
+                        <span class="text-xs text-gray-400">{{ post.created_at[:10] if post.created_at else '' }}</span>
+                        {% if post.image_prompt %}<span class="text-xs">🖼️</span>{% endif %}
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-10">
+            <p class="text-gray-400 text-sm">No posts yet. Generate one in your CLI session.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

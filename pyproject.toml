@@ -1,0 +1,21 @@
+[project]
+name = "post-kit"
+version = "0.1.0"
+description = "Your AI assistant's content engine — with a web UI"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aiosqlite>=0.22.1",
+    "fastapi>=0.139.2",
+    "jinja2>=3.1.6",
+    "markdown>=3.10.2",
+    "python-multipart>=0.0.32",
+    "pyyaml>=6.0.3",
+    "uvicorn[standard]>=0.51.0",
+]
+
+[project.scripts]
+post-kit = "main:main"
+
+[dependency-groups]
+dev = []

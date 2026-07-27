@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Settings — post-kit{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Settings</h1>
+        <p class="text-gray-500 mt-1">Voice, content rules, and modules. Changes apply to your next CLI generation.</p>
+    </div>
+
+    {% if request.query_params.get('saved') %}
+    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">✅ Saved!</div>
+    {% endif %}
+
+    <div class="mb-6 border-b border-gray-200">
+        <nav class="flex gap-1 -mb-px">
+            <button type="button" onclick="showTab('voice')" id="tab-voice" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-brand-500 text-brand-600">🎙️ Voice</button>
+            <button type="button" onclick="showTab('rules')" id="tab-rules" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">📏 Rules</button>
+            <button type="button" onclick="showTab('hashtags')" id="tab-hashtags" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700"># Hashtags</button>
+            <button type="button" onclick="showTab('sources')" id="tab-sources" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">🔍 Sources</button>
+            <button type="button" onclick="showTab('modules')" id="tab-modules" class="tab-btn px-4 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">🧩 Modules</button>
+        </nav>
+    </div>
+
+    <div id="panel-voice" class="tab-panel">
+        <form method="POST" action="/settings/voice">
+            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 class="font-semibold text-gray-900 mb-1">Voice Profile</h2>
+                <p class="text-sm text-gray-500 mb-4">How you sound. The AI reads this before writing every post.</p>
+                <textarea name="voice_content" rows="16" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 font-mono text-sm resize-y">{{ voice_content }}</textarea>
+                <div class="mt-4 flex justify-end"><button type="submit" class="px-5 py-2 bg-brand-500 text-white font-medium rounded-xl hover:bg-brand-600 text-sm">Save</button></div>
+            </div>
+        </form>
+    </div>
+
+    <div id="panel-rules" class="tab-panel hidden">
+        <form method="POST" action="/settings/rules">
+            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 class="font-semibold text-gray-900 mb-1">Content Rules</h2>
+                <p class="text-sm text-gray-500 mb-4">Structure, length, hooks — rules every post follows.</p>
+                <textarea name="rules_content" rows="16" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 font-mono text-sm resize-y">{{ rules_content }}</textarea>
+                <div class="mt-4 flex justify-end"><button type="submit" class="px-5 py-2 bg-brand-500 text-white font-medium rounded-xl hover:bg-brand-600 text-sm">Save</button></div>
+            </div>
+        </form>
+    </div>
+
+    <div id="panel-hashtags" class="tab-panel hidden">
+        <form method="POST" action="/settings/hashtags">
+            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 class="font-semibold text-gray-900 mb-1">Hashtags</h2>
+                <p class="text-sm text-gray-500 mb-4">Your hashtag strategy. 3-5 per post, placed at end. Edit the YAML below.</p>
+                <textarea name="hashtags_content" rows="16" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 font-mono text-sm resize-y">{{ hashtags_content }}</textarea>
+                <div class="mt-4 flex justify-end"><button type="submit" class="px-5 py-2 bg-brand-500 text-white font-medium rounded-xl hover:bg-brand-600 text-sm">Save</button></div>
+            </div>
+        </form>
+    </div>
+
+    <div id="panel-sources" class="tab-panel hidden">
+        <form method="POST" action="/settings/sources">
+            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 class="font-semibold text-gray-900 mb-1">Sources</h2>
+                <p class="text-sm text-gray-500 mb-4">Where your audience hangs out and where to find topics.</p>
+                <textarea name="sources_content" rows="12" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 font-mono text-sm resize-y">{{ sources_content }}</textarea>
+                <div class="mt-4 flex justify-end"><button type="submit" class="px-5 py-2 bg-brand-500 text-white font-medium rounded-xl hover:bg-brand-600 text-sm">Save</button></div>
+            </div>
+        </form>
+    </div>
+
+    <div id="panel-modules" class="tab-panel hidden">
+        <form method="POST" action="/settings/modules">
+            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                <h2 class="font-semibold text-gray-900 mb-1">Modules</h2>
+                <p class="text-sm text-gray-500 mb-4">Enable/disable pipeline capabilities.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {% for mod in available_modules %}
+                    <label class="flex items-start gap-3 p-3 border rounded-lg cursor-pointer hover:border-gray-300 {% if mod.id in active_modules %}border-brand-400 bg-brand-50{% else %}border-gray-200{% endif %}">
+                        <input type="checkbox" name="modules" value="{{ mod.id }}" {% if mod.id in active_modules %}checked{% endif %} class="mt-0.5 w-4 h-4 text-brand-500 rounded">
+                        <div>
+                            <span class="text-sm font-medium text-gray-900">{{ mod.name }}</span>
+                            <p class="text-xs text-gray-500">{{ mod.desc }}</p>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+                <div class="mt-4 flex justify-end"><button type="submit" class="px-5 py-2 bg-brand-500 text-white font-medium rounded-xl hover:bg-brand-600 text-sm">Save</button></div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(t => { t.classList.remove('border-brand-500','text-brand-600'); t.classList.add('border-transparent','text-gray-500'); });
+    document.getElementById('panel-' + name).classList.remove('hidden');
+    const tab = document.getElementById('tab-' + name);
+    tab.classList.remove('border-transparent','text-gray-500');
+    tab.classList.add('border-brand-500','text-brand-600');
+}
+const saved = new URLSearchParams(location.search).get('saved');
+if (saved && ['voice','rules','hashtags','sources','modules'].includes(saved)) showTab(saved);
+</script>
+{% endblock %}

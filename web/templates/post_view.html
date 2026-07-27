@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}{{ post.topic }} — post-kit{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <a href="/posts" class="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-6">← Back to Posts</a>
+
+    <!-- Main Post -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+        <div class="px-8 py-5 border-b border-gray-100 bg-gray-50">
+            <h1 class="text-xl font-bold text-gray-900 mb-2">{{ post.topic }}</h1>
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-1 bg-brand-100 text-brand-700 rounded-full text-xs font-medium">{{ post.platform }}</span>
+                <span class="px-2.5 py-1 bg-gray-200 text-gray-700 rounded-full text-xs font-medium">{{ post.post_type }}</span>
+                <span class="px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">via {{ post.cli_tool }}</span>
+                <span class="text-xs text-gray-400 ml-2">{{ post.created_at[:16] if post.created_at else '' }}</span>
+            </div>
+        </div>
+
+        <div class="px-8 py-6">
+            <div id="post-content" class="text-gray-800 leading-relaxed whitespace-pre-wrap text-[15px]">{{ post.content }}</div>
+        </div>
+
+        <!-- Hashtags -->
+        {% if post.hashtags %}
+        <div class="px-8 py-3 border-t border-gray-100">
+            <div class="flex flex-wrap gap-2">
+                {% for tag in post.hashtags.split() %}
+                <span class="text-brand-600 text-sm font-medium">{{ tag }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="px-8 py-4 border-t border-gray-100 bg-gray-50 flex items-center gap-3">
+            <button onclick="copyEl('post-content')" class="px-5 py-2.5 bg-brand-500 text-white font-medium rounded-xl hover:bg-brand-600 transition-colors shadow-sm text-sm">
+                📋 Copy Post
+            </button>
+            {% if post.hashtags %}
+            <button onclick="copyText(this, `{{ post.hashtags }}`)" class="px-4 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                # Copy Hashtags
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Image Prompt -->
+    {% if post.image_prompt %}
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">🖼️ Image Prompt</h2>
+            <button onclick="copyEl('img-prompt')" class="px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Copy</button>
+        </div>
+        <div id="img-prompt" class="bg-gray-50 rounded-lg p-4 text-sm text-gray-700 leading-relaxed">{{ post.image_prompt }}</div>
+    </div>
+    {% endif %}
+
+    <!-- Video Prompt -->
+    {% if post.video_prompt %}
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">🎬 Video Prompt (Veo3 / 30sec)</h2>
+            <button onclick="copyEl('vid-prompt')" class="px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Copy</button>
+        </div>
+        <div id="vid-prompt" class="bg-gray-50 rounded-lg p-4 text-sm text-gray-700 leading-relaxed whitespace-pre-wrap font-mono">{{ post.video_prompt }}</div>
+    </div>
+    {% endif %}
+
+    <!-- References -->
+    {% if post.references_used %}
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide">📎 References & Sources</h2>
+            <button onclick="copyEl('refs')" class="px-3 py-1.5 text-xs font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Copy</button>
+        </div>
+        <div id="refs" class="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{{ post.references_used }}</div>
+    </div>
+    {% endif %}
+
+    <!-- Saved To -->
+    {% if post.saved_to %}
+    <div class="bg-white rounded-xl border border-gray-200 p-6 mb-6">
+        <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-2">💾 Saved To</h2>
+        <p class="text-sm text-gray-600 font-mono bg-gray-50 rounded-lg p-3">{{ post.saved_to }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Delete -->
+    <div class="flex justify-end">
+        <form method="POST" action="/posts/{{ post.id }}/delete" onsubmit="return confirm('Delete this post?')">
+            <button type="submit" class="px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">🗑️ Delete</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function copyEl(id) {
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        // Brief flash feedback
+        const el = document.getElementById(id);
+        el.classList.add('ring-2', 'ring-green-400');
+        setTimeout(() => el.classList.remove('ring-2', 'ring-green-400'), 800);
+    });
+}
+function copyText(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '✓ Copied';
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}post-kit{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50:'#f0f9ff',100:'#e0f2fe',200:'#bae6fd',300:'#7dd3fc',400:'#38bdf8',500:'#0ea5e9',600:'#0284c7',700:'#0369a1',800:'#075985',900:'#0c4a6e' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .fade-in { animation: fadeIn 0.2s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body class="h-full bg-gray-50">
+    <div class="min-h-full">
+        {% if page != 'onboarding' %}
+        <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-14">
+                    <div class="flex items-center">
+                        <a href="/dashboard" class="flex items-center gap-2">
+                            <span class="text-xl">📦</span>
+                            <span class="text-lg font-bold text-gray-900">post-kit</span>
+                        </a>
+                        <div class="hidden sm:ml-8 sm:flex sm:space-x-1">
+                            <a href="/dashboard" class="px-3 py-2 rounded-lg text-sm font-medium {% if page == 'dashboard' %}bg-brand-50 text-brand-700{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %}">
+                                Dashboard
+                            </a>
+                            <a href="/posts" class="px-3 py-2 rounded-lg text-sm font-medium {% if page == 'posts' %}bg-brand-50 text-brand-700{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %}">
+                                Posts
+                            </a>
+                            <a href="/settings" class="px-3 py-2 rounded-lg text-sm font-medium {% if page == 'settings' %}bg-brand-50 text-brand-700{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %}">
+                                Settings
+                            </a>
+                            <a href="/how-it-works" class="px-3 py-2 rounded-lg text-sm font-medium {% if page == 'how' %}bg-brand-50 text-brand-700{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %}">
+                                How It Works
+                            </a>
+                        </div>
+                    </div>
+                    <div class="sm:hidden flex items-center">
+                        <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="p-2 rounded-lg text-gray-600 hover:bg-gray-100">
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden sm:hidden border-t border-gray-200 pb-2">
+                <div class="px-4 pt-2 space-y-1">
+                    <a href="/dashboard" class="block px-3 py-2 rounded-lg text-sm font-medium {% if page == 'dashboard' %}bg-brand-50 text-brand-700{% else %}text-gray-600{% endif %}">Dashboard</a>
+                    <a href="/posts" class="block px-3 py-2 rounded-lg text-sm font-medium {% if page == 'posts' %}bg-brand-50 text-brand-700{% else %}text-gray-600{% endif %}">Posts</a>
+                    <a href="/settings" class="block px-3 py-2 rounded-lg text-sm font-medium {% if page == 'settings' %}bg-brand-50 text-brand-700{% else %}text-gray-600{% endif %}">Settings</a>
+                    <a href="/how-it-works" class="block px-3 py-2 rounded-lg text-sm font-medium {% if page == 'how' %}bg-brand-50 text-brand-700{% else %}text-gray-600{% endif %}">How It Works</a>
+                </div>
+            </div>
+        </nav>
+        {% endif %}
+        <main class="fade-in">{% block content %}{% endblock %}</main>
+    </div>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

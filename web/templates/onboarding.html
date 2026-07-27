@@ -1,0 +1,392 @@
+{% extends "base.html" %}
+{% block title %}Setup — post-kit{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4">
+    <div class="max-w-2xl w-full">
+        <div class="text-center mb-10">
+            <span class="text-5xl mb-4 block">📦</span>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome to post-kit</h1>
+            <p class="text-gray-600 text-lg">13 quick questions. Then your content pipeline is live.</p>
+        </div>
+
+        <div class="mb-8">
+            <div class="flex justify-between text-sm text-gray-500 mb-2">
+                <span>Step <span id="current-step">1</span> of 13</span>
+                <span id="progress-pct">8%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+                <div id="progress-bar" class="bg-brand-500 h-2 rounded-full transition-all duration-500" style="width: 8%"></div>
+            </div>
+        </div>
+
+        <form id="onboarding-form" method="POST" action="/onboarding">
+
+
+            <!-- Step 1: Niche -->
+            <div class="step" data-step="1">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">What's your niche?</h2>
+                    <p class="text-gray-500 mb-6">What topic area do you create content about?</p>
+                    <input type="text" name="niche" placeholder="e.g., AI/tech, fitness, crypto, marketing..." class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-lg">
+                    <p class="mt-3 text-sm text-gray-400">Be specific — "AI memes and news" beats just "tech"</p>
+                </div>
+            </div>
+
+            <!-- Step 2: Content Goal -->
+            <div class="step hidden" data-step="2">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">What's your content goal?</h2>
+                    <p class="text-gray-500 mb-6">This shapes your entire pipeline — templates, voice, structure.</p>
+                    <input type="hidden" name="content_goal" id="content-goal-value" value="meme_viral">
+                    <div class="space-y-3" id="goal-options">
+                        <div class="goal-card p-4 border-2 border-brand-500 bg-brand-50 rounded-xl cursor-pointer transition-colors" data-value="meme_viral">
+                            <span class="font-medium text-gray-900">😈 Meme-First / Go Viral</span>
+                            <p class="text-sm text-gray-500 mt-1">Memes, roasts, comparisons. Shareability is king. Grow fast.</p>
+                        </div>
+                        <div class="goal-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="educational">
+                            <span class="font-medium text-gray-900">📚 Educational / Teach</span>
+                            <p class="text-sm text-gray-500 mt-1">Teach from experience. Frameworks, how-tos, breakdowns.</p>
+                        </div>
+                        <div class="goal-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="professional">
+                            <span class="font-medium text-gray-900">🏢 Professional Authority</span>
+                            <p class="text-sm text-gray-500 mt-1">Build credibility. Thought leadership with substance.</p>
+                        </div>
+                        <div class="goal-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="storytelling">
+                            <span class="font-medium text-gray-900">📖 Storytelling / Build in Public</span>
+                            <p class="text-sm text-gray-500 mt-1">Share your journey. Lessons, progress, real experiences.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Step 3: Voice -->
+            <div class="step hidden" data-step="3">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">How do you want to sound?</h2>
+                    <p class="text-gray-500 mb-6">Pick the closest style or describe your own.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4" id="voice-options">
+                        <div class="voice-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="Savage and meme-literate">
+                            <span class="font-medium text-gray-900">🔥 Savage & Memey</span>
+                            <p class="text-sm text-gray-500 mt-1">Memes, roasts, unhinged takes</p>
+                        </div>
+                        <div class="voice-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="Casual and friendly">
+                            <span class="font-medium text-gray-900">😊 Casual & Friendly</span>
+                            <p class="text-sm text-gray-500 mt-1">Approachable, conversational</p>
+                        </div>
+                        <div class="voice-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="Professional and authoritative">
+                            <span class="font-medium text-gray-900">🏢 Professional</span>
+                            <p class="text-sm text-gray-500 mt-1">Clear expertise, trusted</p>
+                        </div>
+                        <div class="voice-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="Educational and clear">
+                            <span class="font-medium text-gray-900">📚 Educational</span>
+                            <p class="text-sm text-gray-500 mt-1">Teaching without being boring</p>
+                        </div>
+                        <div class="voice-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="Motivational but real">
+                            <span class="font-medium text-gray-900">💪 Motivational</span>
+                            <p class="text-sm text-gray-500 mt-1">Inspiring, no fluff</p>
+                        </div>
+                        <div class="voice-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="custom">
+                            <span class="font-medium text-gray-900">✨ Custom</span>
+                            <p class="text-sm text-gray-500 mt-1">Describe your own</p>
+                        </div>
+                    </div>
+                    <input type="hidden" name="voice" id="voice-value" value="Savage and meme-literate">
+                    <div id="custom-voice-container" class="hidden mt-4">
+                        <textarea name="voice_custom" rows="3" placeholder="Describe your voice..." class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Platforms -->
+            <div class="step hidden" data-step="4">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">What platforms?</h2>
+                    <p class="text-gray-500 mb-6">Select all that apply. Each gets platform-specific content.</p>
+                    <div class="space-y-3" id="platform-options">
+                        <div class="platform-card flex items-center gap-3 p-4 border-2 border-brand-500 bg-brand-50 rounded-xl cursor-pointer" data-value="linkedin" data-selected="true">
+                            <span class="text-lg">💼</span><span class="font-medium text-gray-900">LinkedIn</span><span class="ml-auto text-brand-500 font-bold">✓</span>
+                        </div>
+                        <div class="platform-card flex items-center gap-3 p-4 border-2 border-brand-500 bg-brand-50 rounded-xl cursor-pointer" data-value="twitter" data-selected="true">
+                            <span class="text-lg">𝕏</span><span class="font-medium text-gray-900">X (Twitter)</span><span class="ml-auto text-brand-500 font-bold">✓</span>
+                        </div>
+                        <div class="platform-card flex items-center gap-3 p-4 border-2 border-brand-500 bg-brand-50 rounded-xl cursor-pointer" data-value="instagram" data-selected="true">
+                            <span class="text-lg">📸</span><span class="font-medium text-gray-900">Instagram</span><span class="ml-auto text-brand-500 font-bold">✓</span>
+                        </div>
+                        <div class="platform-card flex items-center gap-3 p-4 border-2 border-brand-500 bg-brand-50 rounded-xl cursor-pointer" data-value="reddit" data-selected="true">
+                            <span class="text-lg">🤖</span><span class="font-medium text-gray-900">Reddit</span><span class="ml-auto text-brand-500 font-bold">✓</span>
+                        </div>
+                    </div>
+                    <input type="hidden" name="platforms" id="platforms-hidden" value="linkedin,twitter,instagram,reddit">
+                </div>
+            </div>
+
+
+            <!-- Step 5: Pillars -->
+            <div class="step hidden" data-step="5">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Content topics?</h2>
+                    <p class="text-gray-500 mb-6">List your topics with rough % split.</p>
+                    <textarea name="pillars" rows="5" placeholder="e.g.,&#10;Meme reactions to news 35%&#10;Comparisons and roasts 25%&#10;Educational memes 20%&#10;Hot takes 10%&#10;Build in public 10%" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-lg"></textarea>
+                </div>
+            </div>
+
+            <!-- Step 6: Visuals -->
+            <div class="step hidden" data-step="6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Do you use images/memes?</h2>
+                    <p class="text-gray-500 mb-6">Enables image prompts and meme template suggestions.</p>
+                    <input type="hidden" name="visuals" id="visuals-value" value="yes">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="choice-card p-6 text-center border-2 border-brand-500 bg-brand-50 rounded-xl cursor-pointer" data-target="visuals-value" data-value="yes">
+                            <span class="text-3xl block mb-2">🖼️</span><span class="font-medium text-gray-900">Yes — memes & images</span>
+                        </div>
+                        <div class="choice-card p-6 text-center border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300" data-target="visuals-value" data-value="no">
+                            <span class="text-3xl block mb-2">📝</span><span class="font-medium text-gray-900">Text only</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 7: Video Prompts -->
+            <div class="step hidden" data-step="7">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Want video prompts? (Reels/Shorts)</h2>
+                    <p class="text-gray-500 mb-6">Generates 30-sec video scripts with voiceover for Veo3/Runway/Pika.</p>
+                    <input type="hidden" name="video_prompts" id="video-value" value="yes">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="choice-card p-6 text-center border-2 border-brand-500 bg-brand-50 rounded-xl cursor-pointer" data-target="video-value" data-value="yes">
+                            <span class="text-3xl block mb-2">🎬</span><span class="font-medium text-gray-900">Yes — 30s video prompts</span>
+                        </div>
+                        <div class="choice-card p-6 text-center border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300" data-target="video-value" data-value="no">
+                            <span class="text-3xl block mb-2">⏭️</span><span class="font-medium text-gray-900">Skip video</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 8: Humor -->
+            <div class="step hidden" data-step="8">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Memes, humor, roasts?</h2>
+                    <p class="text-gray-500 mb-6">Enables meme templates and savage mode.</p>
+                    <input type="hidden" name="humor" id="humor-value" value="yes">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="choice-card p-6 text-center border-2 border-brand-500 bg-brand-50 rounded-xl cursor-pointer" data-target="humor-value" data-value="yes">
+                            <span class="text-3xl block mb-2">😈</span><span class="font-medium text-gray-900">Bring the heat</span>
+                        </div>
+                        <div class="choice-card p-6 text-center border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300" data-target="humor-value" data-value="no">
+                            <span class="text-3xl block mb-2">🙅</span><span class="font-medium text-gray-900">Not my style</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 9: Tagging Preference -->
+            <div class="step hidden" data-step="9">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Tag companies & people in posts?</h2>
+                    <p class="text-gray-500 mb-6">When mentioning @OpenAI, @Google, etc. — tag them or plain text?</p>
+                    <input type="hidden" name="tagging" id="tagging-value" value="ask">
+                    <div class="space-y-3" id="tagging-options">
+                        <div class="tag-card p-4 border-2 border-brand-500 bg-brand-50 rounded-xl cursor-pointer transition-colors" data-value="ask">
+                            <span class="font-medium text-gray-900">🤔 Ask me each time</span>
+                            <p class="text-sm text-gray-500 mt-1">I'll decide per post whether to tag</p>
+                        </div>
+                        <div class="tag-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="always">
+                            <span class="font-medium text-gray-900">✅ Always tag</span>
+                            <p class="text-sm text-gray-500 mt-1">Mention companies/people with @ handles by default</p>
+                        </div>
+                        <div class="tag-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="never">
+                            <span class="font-medium text-gray-900">❌ Never tag</span>
+                            <p class="text-sm text-gray-500 mt-1">Just use names in plain text</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Step 10: Engagement Style -->
+            <div class="step hidden" data-step="10">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">How should posts end?</h2>
+                    <p class="text-gray-500 mb-6">Your default engagement hook style.</p>
+                    <input type="hidden" name="engagement_style" id="engagement-value" value="debate">
+                    <div class="space-y-3" id="engagement-options">
+                        <div class="engage-card p-4 border-2 border-brand-500 bg-brand-50 rounded-xl cursor-pointer transition-colors" data-value="debate">
+                            <span class="font-medium text-gray-900">🔥 Invite debate / disagreement</span>
+                            <p class="text-sm text-gray-500 mt-1">"Am I wrong?" / "Fight me on this"</p>
+                        </div>
+                        <div class="engage-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="tag">
+                            <span class="font-medium text-gray-900">👋 Tag a friend</span>
+                            <p class="text-sm text-gray-500 mt-1">"Tag someone who needs to see this"</p>
+                        </div>
+                        <div class="engage-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="question">
+                            <span class="font-medium text-gray-900">❓ Ask a question</span>
+                            <p class="text-sm text-gray-500 mt-1">"What would you do?" / "Has this happened to you?"</p>
+                        </div>
+                        <div class="engage-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors" data-value="none">
+                            <span class="font-medium text-gray-900">🎤 Just drop the mic</span>
+                            <p class="text-sm text-gray-500 mt-1">End with the punchline. No CTA.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 11: Content Style -->
+            <div class="step hidden" data-step="11">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">News-based or evergreen?</h2>
+                    <p class="text-gray-500 mb-6">Enables news scout for trending topics.</p>
+                    <input type="hidden" name="content_style" id="content-style-value" value="mix">
+                    <div class="space-y-3" id="style-options">
+                        <div class="style-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300" data-value="news-based">
+                            <span class="font-medium text-gray-900">📰 News-based</span>
+                            <p class="text-sm text-gray-500 mt-1">React to what's happening today</p>
+                        </div>
+                        <div class="style-card p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300" data-value="evergreen">
+                            <span class="font-medium text-gray-900">🌲 Evergreen</span>
+                            <p class="text-sm text-gray-500 mt-1">Timeless content that always works</p>
+                        </div>
+                        <div class="style-card p-4 border-2 border-brand-500 bg-brand-50 rounded-xl cursor-pointer" data-value="mix">
+                            <span class="font-medium text-gray-900">🔀 Mix of both</span>
+                            <p class="text-sm text-gray-500 mt-1">Best of both worlds</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 12: Audience -->
+            <div class="step hidden" data-step="12">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Where's your audience?</h2>
+                    <p class="text-gray-500 mb-6">Subreddits, communities, forums they hang out in.</p>
+                    <textarea name="audience_hangouts" rows="4" placeholder="e.g.,&#10;r/MachineLearning, r/ProgrammerHumor&#10;Hacker News&#10;AI Twitter community&#10;Discord servers" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 text-lg"></textarea>
+                </div>
+            </div>
+
+            <!-- Step 13: Cadence + Timezone -->
+            <div class="step hidden" data-step="13">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-2">Posting frequency & timezone?</h2>
+                    <input type="hidden" name="cadence" id="cadence-value" value="1-2x daily">
+                    <div class="space-y-3 mb-6" id="cadence-options">
+                        <div class="cadence-card p-3 border-2 border-brand-500 bg-brand-50 rounded-xl cursor-pointer" data-value="1-2x daily">
+                            <span class="font-medium text-gray-900">1-2x daily</span> <span class="text-sm text-gray-500">— best for growth</span>
+                        </div>
+                        <div class="cadence-card p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300" data-value="3-5x per week">
+                            <span class="font-medium text-gray-900">3-5x per week</span>
+                        </div>
+                        <div class="cadence-card p-3 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-gray-300" data-value="1-2x per week">
+                            <span class="font-medium text-gray-900">1-2x per week</span>
+                        </div>
+                    </div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
+                    <input type="text" name="timezone" value="Asia/Karachi" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+                    <div class="mt-3 flex flex-wrap gap-2">
+                        <button type="button" class="tz-btn px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs text-gray-700" data-tz="US/Eastern">US/Eastern</button>
+                        <button type="button" class="tz-btn px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs text-gray-700" data-tz="US/Pacific">US/Pacific</button>
+                        <button type="button" class="tz-btn px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs text-gray-700" data-tz="Europe/London">Europe/London</button>
+                        <button type="button" class="tz-btn px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs text-gray-700" data-tz="Asia/Karachi">Asia/Karachi</button>
+                        <button type="button" class="tz-btn px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs text-gray-700" data-tz="Asia/Kolkata">Asia/Kolkata</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between mt-8">
+                <button type="button" id="btn-prev" class="hidden px-6 py-3 text-gray-600 font-medium rounded-xl border border-gray-300 hover:bg-gray-50">← Back</button>
+                <div class="ml-auto">
+                    <button type="button" id="btn-next" class="px-8 py-3 bg-brand-500 text-white font-medium rounded-xl hover:bg-brand-600 shadow-sm">Next →</button>
+                    <button type="submit" id="btn-submit" class="hidden px-8 py-3 bg-green-500 text-white font-medium rounded-xl hover:bg-green-600 shadow-sm">🚀 Launch Pipeline</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+(function() {
+    const steps = document.querySelectorAll('.step');
+    const progressBar = document.getElementById('progress-bar');
+    const currentStepEl = document.getElementById('current-step');
+    const progressPct = document.getElementById('progress-pct');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const btnSubmit = document.getElementById('btn-submit');
+    let current = 0;
+
+    function showStep(idx) {
+        steps.forEach((s, i) => s.classList.toggle('hidden', i !== idx));
+        current = idx;
+        const pct = Math.round(((idx + 1) / steps.length) * 100);
+        progressBar.style.width = pct + '%';
+        currentStepEl.textContent = idx + 1;
+        progressPct.textContent = pct + '%';
+        btnPrev.classList.toggle('hidden', idx === 0);
+        btnNext.classList.toggle('hidden', idx === steps.length - 1);
+        btnSubmit.classList.toggle('hidden', idx !== steps.length - 1);
+    }
+
+    btnNext.addEventListener('click', () => { if (current < steps.length - 1) showStep(current + 1); });
+    btnPrev.addEventListener('click', () => { if (current > 0) showStep(current - 1); });
+
+    // Generic card selector factory
+    function setupCards(selector, hiddenId) {
+        document.querySelectorAll(selector).forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll(selector).forEach(c => { c.classList.remove('border-brand-500','bg-brand-50'); c.classList.add('border-gray-200'); });
+                card.classList.remove('border-gray-200'); card.classList.add('border-brand-500','bg-brand-50');
+                document.getElementById(hiddenId).value = card.dataset.value;
+            });
+        });
+    }
+
+    setupCards('.goal-card', 'content-goal-value');
+    setupCards('.voice-card', 'voice-value');
+    setupCards('.style-card', 'content-style-value');
+    setupCards('.cadence-card', 'cadence-value');
+    setupCards('.tag-card', 'tagging-value');
+    setupCards('.engage-card', 'engagement-value');
+
+    // Voice custom toggle
+    document.querySelectorAll('.voice-card').forEach(card => {
+        card.addEventListener('click', () => {
+            document.getElementById('custom-voice-container').classList.toggle('hidden', card.dataset.value !== 'custom');
+        });
+    });
+
+    // Choice cards (binary yes/no)
+    document.querySelectorAll('.choice-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const container = card.parentElement;
+            container.querySelectorAll('.choice-card').forEach(c => { c.classList.remove('border-brand-500','bg-brand-50'); c.classList.add('border-gray-200'); });
+            card.classList.remove('border-gray-200'); card.classList.add('border-brand-500','bg-brand-50');
+            document.getElementById(card.dataset.target).value = card.dataset.value;
+        });
+    });
+
+    // Platform multi-select
+    document.querySelectorAll('.platform-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const sel = card.dataset.selected === 'true';
+            card.dataset.selected = sel ? 'false' : 'true';
+            if (sel) { card.classList.remove('border-brand-500','bg-brand-50'); card.classList.add('border-gray-200'); card.querySelector('span:last-child').classList.add('hidden'); }
+            else { card.classList.remove('border-gray-200'); card.classList.add('border-brand-500','bg-brand-50'); card.querySelector('span:last-child').classList.remove('hidden'); }
+            document.getElementById('platforms-hidden').value = Array.from(document.querySelectorAll('.platform-card[data-selected="true"]')).map(c => c.dataset.value).join(',');
+        });
+    });
+
+    // Timezone buttons
+    document.querySelectorAll('.tz-btn').forEach(btn => {
+        btn.addEventListener('click', () => { document.querySelector('input[name="timezone"]').value = btn.dataset.tz; });
+    });
+
+    showStep(0);
+})();
+</script>
+{% endblock %}

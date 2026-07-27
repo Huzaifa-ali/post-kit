@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}How It Works — post-kit{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-10">
+        <h1 class="text-3xl font-bold text-gray-900">How post-kit Works</h1>
+        <p class="text-gray-500 mt-2">Your AI CLI agent creates content. This dashboard shows everything.</p>
+    </div>
+
+    <!-- The Flow -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-6">The Flow</h2>
+        <div class="space-y-6">
+            <div class="flex items-start gap-4">
+                <span class="w-10 h-10 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center font-bold shrink-0">1</span>
+                <div>
+                    <h3 class="font-semibold text-gray-900">You talk to your AI CLI</h3>
+                    <p class="text-gray-600 text-sm mt-1">Open kiro, claude, cursor — any AI CLI tool. Say "write a post about [topic]". The AI reads your config files and runs the full pipeline.</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-4">
+                <span class="w-10 h-10 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center font-bold shrink-0">2</span>
+                <div>
+                    <h3 class="font-semibold text-gray-900">Pipeline runs automatically</h3>
+                    <p class="text-gray-600 text-sm mt-1">Research → Write → Voice Match → Anti-AI Pass → Quality Gate. Your voice, your rules, your style — enforced every time.</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-4">
+                <span class="w-10 h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold shrink-0">3</span>
+                <div>
+                    <h3 class="font-semibold text-gray-900">Content delivered with everything</h3>
+                    <p class="text-gray-600 text-sm mt-1">You get: the post (per platform), hashtags, image prompt, video prompt, references — all generated together.</p>
+                </div>
+            </div>
+            <div class="flex items-start gap-4">
+                <span class="w-10 h-10 bg-yellow-100 text-yellow-700 rounded-full flex items-center justify-center font-bold shrink-0">4</span>
+                <div>
+                    <h3 class="font-semibold text-gray-900">Saved to database + filesystem</h3>
+                    <p class="text-gray-600 text-sm mt-1">Every post is stored in SQLite with full metadata. View, copy, manage everything from this dashboard.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- What Each Post Contains -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">What Each Post Contains</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="p-4 bg-gray-50 rounded-xl">
+                <span class="text-lg">📝</span> <span class="font-medium text-gray-900 ml-2">Post content</span>
+                <p class="text-sm text-gray-500 mt-1">Platform-specific version (LinkedIn, X, Instagram, Reddit)</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-xl">
+                <span class="text-lg">#️⃣</span> <span class="font-medium text-gray-900 ml-2">Hashtags</span>
+                <p class="text-sm text-gray-500 mt-1">Platform-aware (LinkedIn yes, X never, Insta in comments)</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-xl">
+                <span class="text-lg">🖼️</span> <span class="font-medium text-gray-900 ml-2">Image prompt</span>
+                <p class="text-sm text-gray-500 mt-1">For Midjourney/DALL-E — copyable</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-xl">
+                <span class="text-lg">🎬</span> <span class="font-medium text-gray-900 ml-2">Video prompt</span>
+                <p class="text-sm text-gray-500 mt-1">30-sec Veo3/Runway script with voiceover</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-xl">
+                <span class="text-lg">📎</span> <span class="font-medium text-gray-900 ml-2">References</span>
+                <p class="text-sm text-gray-500 mt-1">Sources with URLs — always research-backed</p>
+            </div>
+            <div class="p-4 bg-gray-50 rounded-xl">
+                <span class="text-lg">🏷️</span> <span class="font-medium text-gray-900 ml-2">Metadata</span>
+                <p class="text-sm text-gray-500 mt-1">Platform, type, CLI used, date, save path</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Commands -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">What to Say to Your AI CLI</h2>
+        <div class="space-y-3 font-mono text-sm">
+            <div class="p-3 bg-gray-900 text-green-400 rounded-lg">"write a post about [topic]"</div>
+            <div class="p-3 bg-gray-900 text-green-400 rounded-lg">"today's post" — researches trending news and creates for all platforms</div>
+            <div class="p-3 bg-gray-900 text-green-400 rounded-lg">"meme about [thing]" — uses meme templates</div>
+            <div class="p-3 bg-gray-900 text-green-400 rounded-lg">"roast [company/thing]"</div>
+            <div class="p-3 bg-gray-900 text-green-400 rounded-lg">"what's trending" — finds topics from your sources</div>
+            <div class="p-3 bg-gray-900 text-green-400 rounded-lg">"help me improve my voice" — brainstorm session</div>
+        </div>
+    </div>
+
+    <!-- Quality Standards -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Built-in Quality Standards</h2>
+        <div class="space-y-3 text-sm text-gray-700">
+            <div class="flex items-center gap-3"><span class="text-green-500">✓</span> Every post is research-backed with real sources</div>
+            <div class="flex items-center gap-3"><span class="text-green-500">✓</span> Anti-AI writing pass removes robotic language</div>
+            <div class="flex items-center gap-3"><span class="text-green-500">✓</span> Quality gates: hook test, one-idea test, save/share test</div>
+            <div class="flex items-center gap-3"><span class="text-green-500">✓</span> Platform-specific formatting (no hashtags where they hurt)</div>
+            <div class="flex items-center gap-3"><span class="text-green-500">✓</span> Engagement hooks on every post</div>
+            <div class="flex items-center gap-3"><span class="text-green-500">✓</span> Company tagging per your preference</div>
+            <div class="flex items-center gap-3"><span class="text-green-500">✓</span> Accuracy over virality — funny AND true, always</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
