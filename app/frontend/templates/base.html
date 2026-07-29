@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}post-kit{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="h-full flex overflow-hidden">
+  {% include "components/sidebar.html" %}
+
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <header class="h-14 border-b flex items-center justify-between px-6">
+      <h1 class="text-lg font-semibold">{% block page_title %}{% endblock %}</h1>
+      <div class="flex items-center gap-3">
+        {% include "components/command-bar.html" %}
+        <button data-action="notifications" class="relative p-2 rounded-lg hover:bg-surface-raised transition-colors">
+          <span class="text-lg">🔔</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-6">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  {% block scripts %}{% endblock %}
+  <script type="module" src="/static/js/app.js"></script>
+</body>
+</html>

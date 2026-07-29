@@ -1,0 +1,18 @@
+<button data-action="open-command-bar"
+        class="flex items-center gap-2 px-3 py-1.5 rounded-lg border bg-surface-raised text-sm text-secondary hover:text-primary transition-colors">
+  <span>⌘K</span>
+  <span>Search or command...</span>
+</button>
+
+<div data-command-bar class="hidden fixed inset-0 z-50 flex items-center justify-center" style="padding-top: 20vh; align-items: flex-start;">
+  <div class="absolute inset-0" style="background: rgba(0,0,0,0.5)" data-action="close-command-bar"></div>
+  <div class="relative w-full max-w-lg bg-surface-raised border rounded-xl overflow-hidden" style="box-shadow: var(--shadow-overlay)">
+    <input type="text"
+           data-command-input
+           placeholder="Type a command..."
+           class="w-full px-4 py-3 bg-surface-raised text-primary text-sm border-b"
+           style="outline: none;">
+    <div data-command-results class="max-h-64 overflow-y-auto p-2">
+    </div>
+  </div>
+</div>
