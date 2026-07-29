@@ -75,7 +75,6 @@ postList?.addEventListener('click', async (e) => {
 });
 
 function showPostDetail(post) {
-  // Remove existing modal if any
   const existing = document.querySelector('[data-post-modal]');
   if (existing) existing.remove();
 
@@ -84,7 +83,7 @@ function showPostDetail(post) {
   modal.className = 'fixed inset-0 z-50 flex items-center justify-center';
   modal.innerHTML = `
     <div class="absolute inset-0 bg-black/50" data-action="close-post-modal"></div>
-    <div class="relative w-full max-w-2xl mx-4 rounded-xl border border-border bg-surface-raised overflow-hidden" style="max-height:80vh;box-shadow:var(--shadow-overlay);">
+    <div class="relative w-full max-w-3xl mx-4 rounded-xl border border-border bg-surface-raised overflow-hidden" style="max-height:85vh;box-shadow:var(--shadow-overlay);">
       <div class="flex items-center justify-between p-4 border-b border-border">
         <div>
           <h2 class="text-sm font-semibold text-primary">${escapeHtml(post.title)}</h2>
@@ -92,13 +91,13 @@ function showPostDetail(post) {
             <span class="text-xs px-2 py-0.5 rounded-full text-white" style="background:var(--color-status-${post.status})">${post.status}</span>
             ${post.pillar ? `<span class="text-xs text-muted">${escapeHtml(post.pillar)}</span>` : ''}
             ${post.platform ? `<span class="text-xs text-muted">${escapeHtml(post.platform)}</span>` : ''}
+            <span class="text-xs text-muted">${post.created_at || ''}</span>
           </div>
         </div>
-        <button data-action="close-post-modal" class="text-muted hover:text-primary text-lg">&times;</button>
+        <button data-action="close-post-modal" class="text-muted hover:text-primary text-lg px-2">&times;</button>
       </div>
-      <div class="p-4 overflow-y-auto" style="max-height:60vh;">
-        <p class="text-xs text-muted mb-2">${post.path || ''}</p>
-        <p class="text-xs text-muted">Created: ${post.created_at || 'unknown'}</p>
+      <div class="p-4 overflow-y-auto" style="max-height:70vh;">
+        <pre class="text-sm text-primary whitespace-pre-wrap font-sans leading-relaxed">${escapeHtml(post.content || 'No content available.')}</pre>
       </div>
     </div>
   `;

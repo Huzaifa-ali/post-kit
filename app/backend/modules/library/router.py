@@ -2,6 +2,8 @@
 
 from fastapi import APIRouter, HTTPException
 
+from backend.config import get_postkit_root
+from backend.core.bridge import PostKitBridge
 from backend.core.models import PostStatus
 from backend.modules.library import service
 from backend.modules.library.models import PostSummary, UpdatePostRequest
@@ -25,10 +27,14 @@ async def list_posts(
 
 @router.get("/posts/{post_id}")
 async def get_post(post_id: str) -> dict:
-    """Get a single post by ID."""
+    """Get a single post by ID with full file content."""
     post = await service.get_post_by_id(post_id)
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
+    bridge = PostKitBridge(get_postkit_root())
+    posts_path = bridge.get_posts_path()
+    content = service.read_post_content(posts_path, post["path"])
+    post["content"] = content or ""
     return post
 
 

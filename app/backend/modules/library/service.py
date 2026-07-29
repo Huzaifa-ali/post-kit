@@ -123,6 +123,14 @@ async def get_post_by_id(post_id: str) -> dict | None:
     return dict(row) if row else None
 
 
+def read_post_content(posts_path: Path, relative_path: str) -> str | None:
+    """Read the full file content of a post from disk."""
+    filepath = posts_path / relative_path
+    if not filepath.exists():
+        return None
+    return filepath.read_text(encoding="utf-8")
+
+
 async def update_post_status(post_id: str, status: PostStatus) -> None:
     """Update a post's status in the index."""
     db = await get_db()
