@@ -4,6 +4,11 @@ my-niche/
 # User's content output
 posts/
 
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
 # OS files
 .DS_Store
 Thumbs.db
@@ -18,3 +23,9 @@ Thumbs.db
 
 # Internal specs (not shipped)
 FULL-UPDATE-SPEC.md
+
+# Personal launch campaign (not part of post-kit framework)
+launch-campaign/
+
+# LinkedIn MCP server (separate repo)
+../linkedin-mcp-server/
