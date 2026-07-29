@@ -22,6 +22,10 @@ from backend.modules.images.router import router as images_router
 from backend.modules.images import service as images_service
 from backend.modules.brand.router import router as brand_router
 from backend.modules.brand import service as brand_service
+from backend.modules.analytics.router import router as analytics_router
+from backend.modules.credits.router import router as credits_router
+from backend.modules.notifications.router import router as notifications_router
+from backend.modules.settings.router import router as settings_router
 from backend.mcp.registry import has_image_server
 
 logger = logging.getLogger(__name__)
@@ -57,6 +61,10 @@ app.include_router(content_router)
 app.include_router(calendar_router)
 app.include_router(images_router)
 app.include_router(brand_router)
+app.include_router(analytics_router)
+app.include_router(credits_router)
+app.include_router(notifications_router)
+app.include_router(settings_router)
 
 
 def _get_nav_context(bridge: PostKitBridge) -> list[dict]:
