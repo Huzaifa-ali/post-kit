@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@source "../../templates/**/*.html";
+@source "../../components/**/*.html";
+@source "../js/**/*.js";
 
 @theme {
   --color-surface: oklch(0.13 0.01 260);

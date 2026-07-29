@@ -29,3 +29,13 @@ launch-campaign/
 
 # LinkedIn MCP server (separate repo)
 ../linkedin-mcp-server/
+
+
+
+# Tailwind standalone binary
+app/tailwindcss.exe
+
+# Node artifacts (if npm used for dev tooling)
+app/node_modules/
+app/package.json
+app/package-lock.json
