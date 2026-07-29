@@ -3,83 +3,92 @@ inclusion: fileMatch
 fileMatchPattern: "app/tauri/**"
 ---
 
-# Tauri v2 Desktop Shell Standards (2026)
+# Tauri v2 — Thin Shell, Maximum Delegation
 
-## Version & Setup
+Tauri's job: bundle, launch, and manage the Python backend. That's it. Keep Rust minimal.
 
-- Tauri v2 (stable 2026). Use v2 APIs exclusively — not v1.
-- Rust edition 2024.
-- Use Tauri's official sidecar feature for bundling the Python backend.
+## Single Responsibility
 
-## Architecture Principle
+- `main.rs` — ONE job: spawn sidecar, wait for ready, open webview, handle shutdown.
+- No application logic in Rust. If it can be done in Python → do it in Python.
+- No Tauri commands (invoke) unless the feature requires OS-level access that Python can't do.
 
-Tauri is a **thin shell**. Its only jobs:
-1. Bundle and spawn the FastAPI Python process as a sidecar
-2. Open a webview pointing to the local FastAPI server
-3. Handle app lifecycle (startup, shutdown, crash recovery)
-4. Provide OS-level features if needed (file dialogs, system tray, notifications)
+## Sidecar Pattern (2026 Standard for Tauri + Python)
 
-All application logic lives in FastAPI/Python. Minimal Rust code.
-
-## Sidecar Pattern (Python Backend)
-
-Tauri's sidecar feature bundles external binaries with the app:
-
-- Bundle the Python backend as a PyInstaller executable (single file)
-- Configure in `tauri.conf.json` under `bundle.externalBin`
-- Name follows Tauri convention: `backend-x86_64-pc-windows-msvc` (platform-specific suffix)
-- On startup: spawn sidecar, read stdout for port number, open webview to that URL
-- On shutdown: send graceful shutdown signal to sidecar, wait 3s, force-kill if needed
-
-## Process Coordination
+Tauri v2 has first-class sidecar support. Use it:
 
 ```
-Startup:
-1. Tauri main() starts
-2. Spawn sidecar (FastAPI binary) with a random port argument
-3. Sidecar prints JSON to stdout: {"port": 54321, "status": "ready"}
-4. Tauri reads stdout, extracts port
-5. Open webview to http://localhost:{port}
+Build Pipeline:
+1. PyInstaller bundles FastAPI app → single binary
+2. Binary placed in src-tauri/binaries/ with platform triple suffix
+3. `cargo tauri build` bundles everything into installer
+```
+
+### `main.rs` — The Entire Rust File (keep it this small)
+
+```rust
+use tauri::Manager;
+use std::io::{BufRead, BufReader};
+
+fn main() {
+    tauri::Builder::default()
+        .setup(|app| {
+            // Spawn Python backend sidecar
+            let sidecar = app.shell().sidecar("backend").unwrap();
+            let (mut rx, child) = sidecar.spawn().unwrap();
+            
+            // Read port from sidecar stdout
+            // Open webview to http://localhost:{port}
+            // Store child handle for cleanup
+            
+            Ok(())
+        })
+        .on_window_event(|window, event| {
+            // On close: kill sidecar gracefully
+        })
+        .run(tauri::generate_context!())
+        .expect("error running app");
+}
+```
+
+That's the target. Under 50 lines of meaningful Rust.
+
+## Process Coordination Protocol
+
+```
+Sidecar (Python) startup:
+1. Finds available port
+2. Starts uvicorn
+3. Prints to stdout: {"port": 54321, "status": "ready"}
+4. Serves requests
+
+Tauri reads stdout:
+1. Parses JSON line
+2. Extracts port
+3. Sets webview URL to http://localhost:{port}
 
 Shutdown:
-1. User closes window OR app quit event
-2. Send SIGTERM (or equivalent) to sidecar process
-3. Wait up to 3 seconds for graceful exit
-4. Force-kill if still running
-5. Tauri process exits
-
-Crash Recovery:
-1. Monitor sidecar process handle
-2. If process exits unexpectedly:
-   - Show error overlay in webview ("Backend crashed, restarting...")
-   - Attempt to respawn sidecar (max 3 retries)
-   - If retries exhausted: show permanent error with "Quit" button
+1. Tauri sends kill signal to sidecar
+2. Python catches signal, runs cleanup (close DB, etc.)
+3. Process exits
 ```
 
-## Configuration (`tauri.conf.json`)
+## Configuration
 
 ```json
 {
   "productName": "post-kit",
   "identifier": "com.postkit.app",
-  "build": {
-    "devUrl": "http://localhost:8000",
-    "frontendDist": "http://localhost:8000"
-  },
   "app": {
-    "windows": [
-      {
-        "title": "post-kit",
-        "width": 1280,
-        "height": 800,
-        "minWidth": 1024,
-        "minHeight": 600,
-        "decorations": true,
-        "resizable": true
-      }
-    ],
+    "windows": [{
+      "title": "post-kit",
+      "width": 1280,
+      "height": 800,
+      "minWidth": 1024,
+      "minHeight": 600
+    }],
     "security": {
-      "csp": "default-src 'self'; connect-src http://localhost:*; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'"
+      "csp": "default-src 'self'; connect-src http://localhost:*; style-src 'self' 'unsafe-inline'; script-src 'self'"
     }
   },
   "bundle": {
@@ -90,33 +99,30 @@ Crash Recovery:
 }
 ```
 
-## Security
+## Rules
 
-- CSP: only allow connections to localhost.
-- No remote URLs in webview — everything served from local FastAPI.
-- Disable navigation to external origins.
-- No `tauri://` protocol usage unless specifically needed.
-- Disable devtools in production builds.
+- `main.rs` under 100 lines. If it's longer, you're doing too much in Rust.
+- Use `anyhow` for error handling (it's a shell, not a library).
+- Log with `log` crate. No `println!` in production.
+- CSP: localhost only. No external connections from webview.
+- Single instance: prevent multiple app windows.
+- Dev mode: point `devUrl` to `http://localhost:8000` (where uvicorn runs directly).
+- Prod mode: sidecar is the bundled PyInstaller binary.
 
-## Rust Code Style
+## Dev vs Prod
 
-- Keep `main.rs` under 100 lines.
-- Use Tauri's plugin system for any OS-level features (don't implement manually).
-- Error handling: use `anyhow` for the thin shell code. Log errors, don't panic.
-- No complex Rust logic — if it can be done in Python/FastAPI, do it there.
+| Concern | Development | Production |
+|---------|-------------|-----------|
+| Backend | `uvicorn app.backend.main:app --reload` | Bundled sidecar binary |
+| Frontend | Served by FastAPI (same as prod) | Same |
+| Tauri | `cargo tauri dev` with `devUrl` | `cargo tauri build` |
+| Port | Fixed 8000 | Random (sidecar reports via stdout) |
 
-## Build & Distribution
+## Anti-Patterns
 
-- `cargo tauri build` for production binaries.
-- Target all platforms: Windows (.msi/.exe), macOS (.dmg), Linux (.deb/.AppImage).
-- The sidecar binary must be built separately (PyInstaller) before Tauri build.
-- Build pipeline:
-  1. `pyinstaller --onefile app/backend/main.py` → produces backend executable
-  2. Place in `app/tauri/src-tauri/binaries/` with platform suffix
-  3. `cargo tauri build` → bundles everything into installer
-
-## Development Mode
-
-- Dev: run FastAPI directly with `uvicorn` on port 8000, Tauri webview points to it
-- No need to build sidecar during development — just `cargo tauri dev` with `devUrl` set
-- Hot reload: uvicorn `--reload` for backend, Tauri auto-reloads webview on page changes
+- ❌ Business logic in Rust
+- ❌ Tauri commands for things Python can do
+- ❌ Complex Rust error handling (it's a 50-line shell, use `anyhow`)
+- ❌ Multiple Rust files/modules (one `main.rs` is enough)
+- ❌ Custom Tauri plugins (unless genuinely needed for OS access)
+- ❌ External network access from webview

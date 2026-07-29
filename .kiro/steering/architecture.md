@@ -1,77 +1,142 @@
-# Project Architecture Rules
+# Project Architecture — Single Responsibility at Every Level
 
-## Core Principles
+How top-tier open source projects stay maintainable: every piece has one job, clear boundaries, and obvious names.
 
-1. **Filesystem is truth.** SQLite is a rebuildable index. If the DB is deleted, the app rebuilds from files on next startup.
-2. **Nothing hardcoded.** The app renders whatever the user's config defines. No niche-specific knowledge in code.
-3. **PostKitBridge is the boundary.** Only `core/bridge.py` reads/writes post-kit files (`engine/`, `my-niche/`, `posts/`). All other code goes through bridge methods.
-4. **Modules are independent.** No cross-module imports. Communication via event bus only.
-5. **Adapter is opaque.** The app sends plain text, receives plain text. It doesn't know how the AI tool works internally.
+## The Principle
 
-## Module Structure
+**Single responsibility applies at every level:**
+- System level: each layer has one job (Tauri=shell, FastAPI=logic, Frontend=display)
+- Module level: each module owns one feature completely
+- File level: each file has one purpose
+- Function level: each function does one thing
+- Line level: each line is readable without context
 
-Every module follows this layout:
+**If you can't explain it in one sentence, it's too complex. Split it.**
+
+## System Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│ Tauri Shell                                          │
+│ Job: Launch backend, show webview, handle OS events  │
+└─────────────────────┬───────────────────────────────┘
+                      │ spawns
+┌─────────────────────▼───────────────────────────────┐
+│ FastAPI Backend                                      │
+│ Job: All application logic, serve HTML, expose API   │
+├──────────────────────────────────────────────────────┤
+│ ┌──────────┐ ┌──────────┐ ┌──────────┐             │
+│ │ Modules  │ │   Core   │ │ Adapters │             │
+│ │ (features│ │ (shared) │ │ (AI CLI) │             │
+│ └──────────┘ └──────────┘ └──────────┘             │
+└─────────────────────┬───────────────────────────────┘
+                      │ reads/writes
+┌─────────────────────▼───────────────────────────────┐
+│ Filesystem (post-kit)                                │
+│ Job: Source of truth — posts, config, engine         │
+└─────────────────────────────────────────────────────┘
+```
+
+## Module Rules
+
+Every module follows this structure:
 
 ```
 modules/<name>/
-├── router.py    # FastAPI routes (HTTP layer only)
-├── service.py   # Business logic (no FastAPI imports)
-└── models.py    # Pydantic request/response models
+├── router.py    # HTTP in/out. Thin. Calls service.
+├── service.py   # Logic. Thick. The brain.
+└── models.py    # Pydantic schemas. The contract.
 ```
 
-- Router calls service. Service calls bridge/database/adapter as needed.
-- No service calls another module's service directly.
-- If module A needs to react to module B's action → event bus.
+| File | Allowed to import | NOT allowed to import |
+|------|-------------------|----------------------|
+| router.py | FastAPI, own service, own models | Other modules, database directly |
+| service.py | core/bridge, core/database, core/events | FastAPI, other modules |
+| models.py | Pydantic, stdlib | Anything else |
 
-## Adding a New Module
+**Module isolation test:** Delete any module folder. The app still starts (minus that feature). If it doesn't, you have coupling.
 
-1. Create `app/backend/modules/<name>/` with router.py, service.py, models.py
-2. Mount router in `main.py`
+## Core (Shared Layer)
+
+```
+core/
+├── bridge.py     # Reads/writes post-kit files. THE boundary.
+├── database.py   # SQLite connection, migrations, rebuild.
+├── events.py     # Simple observer pattern (< 50 lines).
+└── models.py     # Shared enums and base models only.
+```
+
+- Bridge is the ONLY code touching `my-niche/`, `engine/`, `posts/`.
+- Database is the ONLY code touching `postkit.db`.
+- Events is glue — modules emit, other modules listen. No direct calls across.
+
+## Boundaries (What Can Call What)
+
+```
+Router → Service → Bridge/Database/Adapter/Events
+                ↗
+Frontend → Router (via HTTP)
+
+Module A ─── ✗ ───→ Module B (NEVER direct)
+Module A ──event──→ Events ──event──→ Module B (OK)
+```
+
+## Naming That Works
+
+### Files
+- Python: `snake_case.py` — name = purpose (`bridge.py`, `post_service.py`)
+- Templates: `snake_case.html` — name = page (`library.html`, `content.html`)
+- Components: `kebab-case.html` — name = thing (`post-card.html`, `chat-bubble.html`)
+- JS: `kebab-case.js` or simple names (`app.js`, `chat.js`, `editor.js`)
+
+### Code
+- Classes: `PascalCase` — nouns (`PostKitBridge`, `KiroAdapter`, `PostResponse`)
+- Functions: `snake_case` — verb + noun (`get_posts`, `rebuild_index`, `emit_event`)
+- Variables: `snake_case` — descriptive nouns (`active_modules`, `niche_config`)
+- Constants: `UPPER_SNAKE` — (`DB_PATH`, `DEFAULT_PORT`, `MAX_RETRIES`)
+- Booleans: `is_/has_/can_` prefix (`is_onboarded`, `has_analytics`)
+
+## How to Add Things
+
+### New feature/module
+1. Create `app/backend/modules/<name>/` with router.py + service.py + models.py
+2. Mount router in `main.py` (one line)
 3. Create `app/frontend/templates/<name>.html`
-4. Add conditional nav item in `components/sidebar.html`
-5. No existing code modified.
+4. Add nav item conditionally in sidebar component
+5. Zero changes to existing code
 
-## Adding a New Adapter
-
+### New adapter
 1. Create `app/backend/adapters/<name>.py` implementing `BaseAdapter`
-2. Register in `config.py` as a selectable option
-3. No other code changes needed.
+2. Add to config options
+3. Zero changes to existing code
 
-## File Naming
+### New component
+1. Create `app/frontend/components/<name>.html`
+2. `{% include %}` where needed
+3. Zero changes to existing components
 
-- Python: `snake_case.py`
-- Templates: `snake_case.html`
-- JS: `camelCase.js` or `kebab-case.js` (pick one, stay consistent — prefer `app.js`, `chat.js`)
-- CSS: `app.css` (single compiled file)
-- Components: `kebab-case.html` (e.g., `post-card.html`, `chat-bubble.html`)
+## Anti-Patterns (What Top-Tier Repos Never Do)
 
-## What Lives Where
+- ❌ God files (over 200 lines)
+- ❌ God functions (over 25 lines)
+- ❌ Cross-module imports
+- ❌ Business logic in routers or templates
+- ❌ Hardcoded values that belong in config
+- ❌ Global mutable state
+- ❌ Implicit dependencies (import at module level, use silently)
+- ❌ Abbreviations in names (except universal: `db`, `id`, `url`, `config`)
+- ❌ Commented-out code
+- ❌ Dead code (unreachable, unused imports, unused functions)
+- ❌ Nested callbacks or deeply nested conditionals (> 2 levels)
+- ❌ Mixing concerns in one function (fetch AND render, validate AND save)
+- ❌ Magic strings/numbers (use constants or enums)
 
-| Concern | Location |
-|---------|----------|
-| Post-kit file reading/writing | `core/bridge.py` only |
-| Database operations | `core/database.py` + module services |
-| AI tool communication | `adapters/` |
-| MCP integration | `mcp/` |
-| HTTP endpoints | Module `router.py` files |
-| Business logic | Module `service.py` files |
-| Data shapes | Module `models.py` files |
-| Shared models (enums, base) | `core/models.py` |
-| App configuration | `config.py` + `app/data/config.json` |
-| Frontend pages | `frontend/templates/` |
-| Reusable HTML fragments | `frontend/components/` |
-| Client-side behavior | `frontend/static/js/` |
-| Styling | Tailwind classes in HTML (compiled to `static/css/app.css`) |
+## The Quality Bar
 
-## Anti-Patterns (Never Do)
+This is open source. Contributors will read this code. Every file should be:
 
-- ❌ Import from one module into another module
-- ❌ Read post-kit files (`my-niche/`, `engine/`, `posts/`) outside of bridge.py
-- ❌ Hardcode pillar names, platform names, module names, or any niche-specific strings
-- ❌ Put business logic in router files
-- ❌ Put FastAPI imports in service files
-- ❌ Use raw SQL without parameterized queries
-- ❌ Modify files in `engine/` from app code
-- ❌ Assume specific fields exist in niche.yaml (always check, handle missing gracefully)
-- ❌ Create God objects or utility files that grow unbounded
-- ❌ Skip type hints
+1. **Obvious** — a new contributor understands it in 30 seconds
+2. **Focused** — does one thing, named to reflect that thing
+3. **Independent** — deletable without breaking unrelated code
+4. **Tested** — if it has logic, it has a test
+5. **Documented** — docstring on public functions, comments only for "why" (never "what")
