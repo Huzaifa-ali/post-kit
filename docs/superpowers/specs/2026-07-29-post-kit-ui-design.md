@@ -166,8 +166,18 @@ Abstract interface that all AI tool adapters implement:
 
 ```python
 class BaseAdapter:
-    async def send_message(self, message: str) -> AsyncGenerator[str, None]:
-        """Send a message, yield streaming response chunks."""
+    async def send_message(self, message: str, session_id: str = None) -> AsyncGenerator[str, None]:
+        """Send a message, yield streaming response chunks.
+        If session_id is provided, reuse an existing session (persistent conversation).
+        If None, create a one-shot request-response."""
+        ...
+
+    async def start_session(self) -> str:
+        """Start a persistent session (for multi-turn content creation). Returns session_id."""
+        ...
+
+    async def end_session(self, session_id: str) -> None:
+        """Close a persistent session."""
         ...
 
     async def is_available(self) -> bool:
@@ -179,9 +189,34 @@ class BaseAdapter:
         ...
 ```
 
-The app sends plain text messages to the adapter. The adapter handles tool-specific invocation (spawning CLI, passing context, etc.). The app doesn't know how Kiro CLI or Claude Code work internally.
+**How it works:**
+- The adapter is initialized with the post-kit root path. It spawns the CLI tool pointed at that directory so AGENTS.md is auto-discovered and read by the AI tool.
+- Commands are plain text messages (e.g., "what's trending", "write a post about X", "repurpose this for X"). The AI interprets them because it reads AGENTS.md — the app does no command routing.
+- Content creation uses persistent sessions (multi-turn conversation). Scout and brainstorm use per-session as well. One-shot calls for simple queries.
+- The app doesn't know how Kiro CLI or Claude Code work internally.
 
-### Event Bus (`core/events.py`)
+### MCP Client (`mcp/client.py`)
+
+Connects to MCP servers for image generation and future integrations.
+
+**Configuration:** Reads server configs from `app/data/config.json` using the same format as `.kiro/settings/mcp.json`:
+
+```json
+{
+  "mcp_servers": {
+    "image-gen": {
+      "command": "uvx",
+      "args": ["some-image-server@latest"],
+      "env": {},
+      "disabled": false
+    }
+  }
+}
+```
+
+**Connection:** Spawns MCP server processes via stdio (or connects via SSE if configured). No authentication beyond what the individual MCP server requires.
+
+**Registry (`mcp/registry.py`):** Discovers available servers from config, exposes their tools to modules that need them. If no MCP servers configured → image generation features are simply unavailable (no errors, feature just doesn't show).
 
 Simple pub/sub for module-to-module communication:
 
@@ -276,6 +311,8 @@ platform: <value from niche.yaml platforms>
 ```
 
 If front-matter is missing → default to `published` (backward compatible with existing posts).
+
+**Front-matter ownership:** The app writes and manages front-matter. When the adapter creates a new post (plain markdown), the library service adds front-matter (status: draft, created: now, pillar/platform if inferable from the creation context). When the user changes status in the UI, the app updates front-matter in the file.
 
 ---
 
@@ -542,7 +579,7 @@ No framework. No virtual DOM. Direct DOM manipulation with fetch calls to FastAP
 
 ### Settings
 
-**Purpose:** Technical configuration.
+**Purpose:** Technical configuration only. Does not handle niche content.
 
 **Page:** `settings.html`
 
@@ -550,9 +587,11 @@ No framework. No virtual DOM. Direct DOM manipulation with fetch calls to FastAP
 - Adapter selection (Kiro CLI, Claude Code, etc.)
 - Post-kit directory path
 - MCP server configuration (servers for image gen, future integrations)
-- Version status (current VERSION vs postkit_version — with "Update" action)
+- Version status (current VERSION vs postkit_version — shows notice, "Update" button redirects to Brand where adapter walks through changes per-file)
 - Theme preference (dark/light)
 - Rebuild index button (manual trigger for SQLite rebuild)
+
+**Boundary:** Settings owns technical config (paths, adapter, MCP, theme, index). Brand owns all niche file operations, including applying updates to niche files.
 
 **API endpoints:**
 - `GET /api/settings` — current config
@@ -640,3 +679,32 @@ Adding a new MCP integration:
 1. Configure MCP server in settings
 2. MCP client auto-discovers it via registry
 3. Modules that use MCP can now access new capabilities
+
+---
+
+## Implementation Phasing (Suggested)
+
+This spec is too large for a single implementation pass. Suggested phases:
+
+**Phase 1 — Core (functional app):**
+- Tauri shell + FastAPI bootstrap
+- PostKitBridge + config
+- SQLite with rebuild logic
+- Library module (browse, filter, status management, editor)
+- Content module (chat + scout)
+- Adapter (Kiro CLI)
+- App shell (sidebar, topbar, command bar)
+- Onboarding flow
+
+**Phase 2 — Visual + Planning:**
+- Calendar module (queue, scheduling, cadence)
+- Images module (MCP client, media library, upload, carousel)
+- Brand section (niche file editing)
+
+**Phase 3 — Insights + Polish:**
+- Analytics module (CSV import, dashboard, export)
+- Credits module (plan display, usage tracking)
+- Notifications module (activity feed, alerts)
+- Settings page (full config management)
+
+Each phase produces a usable app. Phase 1 alone covers the primary workflow (create content + manage posts).
