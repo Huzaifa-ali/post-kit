@@ -10,7 +10,7 @@
         {{ group.label }}
       </span>
       <ul class="mt-2 space-y-1">
-        {% for item in group.items %}
+        {% for item in group["items"] %}
         <li>
           <a href="{{ item.url }}"
              class="flex items-center gap-2 px-2 py-1.5 rounded-md text-sm transition-colors
