@@ -661,6 +661,77 @@ markdown            # preview rendering
 
 ---
 
+## Hard Problems & Decisions
+
+### Adapter Process Management
+
+The adapter spawns a CLI tool (e.g., `kiro-cli chat`) as a long-running child process:
+
+- **Spawning:** Process started with the post-kit root as working directory. stdin/stdout piped.
+- **Message boundaries:** The adapter reads line-by-line and uses a delimiter or EOF-per-response pattern. Implementation will need to experiment with each CLI tool's output format and define a parsing strategy per adapter.
+- **Session lifecycle:** One process per session. `start_session()` spawns process, `send_message()` writes to stdin, yields from stdout. `end_session()` sends exit/quit command and terminates process.
+- **Error recovery:** If process dies mid-session → adapter emits error event → UI shows "Session lost, retry?" → user can restart. No automatic retry (AI calls are expensive).
+- **Timeouts:** Configurable per-adapter (default 120s for generation, 30s for scout). Timeout → kill process → show error.
+
+### Scout Output Rendering
+
+The scout tab renders AI output as **rich markdown** — not structured cards. The adapter returns text (markdown tables, lists), and the UI renders it using the markdown library. The user interacts via the chat interface ("draft #3", "tell me more about #5"). No parsing of AI output into structured data — that's fragile and breaks when AI format changes.
+
+If in the future we want true structured output, the adapter interface can be extended with a `send_structured_request()` method that asks the AI to respond in JSON. But v1 is text-in, text-out.
+
+### Tauri ↔ FastAPI Coordination
+
+- **Port:** FastAPI starts on a random available port (OS assigns). Writes port to a temp file.
+- **Readiness:** Tauri polls the health endpoint (`GET /api/health`) until it returns 200, then loads the webview URL.
+- **Crash recovery:** Tauri monitors FastAPI process. If it dies → shows "Backend crashed, restarting..." → respawns.
+- **URL:** Webview points to `http://localhost:{port}` read from the temp file.
+
+### Staleness Detection
+
+On startup, compare:
+- `last_index_build` timestamp (stored in SQLite metadata table)
+- Most recent file modification time across `posts/` directory tree
+
+If any file in posts/ is newer than last_index_build → rebuild. If posts/ folder doesn't exist yet → index is empty (valid state). This is a single filesystem stat call per startup — fast.
+
+During runtime: no file watcher. After any adapter session that involves content creation, library service rescans posts/ for new/modified files since session start (timestamp comparison). Simple, no daemon needed.
+
+### Post Detection After Generation
+
+After an adapter session ends (content creation, repurpose, etc.):
+1. Library service records a "session start" timestamp before adapter call
+2. After adapter finishes, scans posts/ for files with mtime > session start
+3. New files found → indexed, status set to "draft", event emitted
+4. No file watcher, no convention with adapter — just filesystem timestamps
+
+### Error Handling & Offline Behavior
+
+| Scenario | Behavior |
+|----------|----------|
+| Adapter unavailable (CLI not installed) | App works in read-only mode. Library, calendar, analytics, brand editing all function. Content creation shows "Adapter not available — check Settings" |
+| Adapter authenticated but network fails mid-generation | Stream stops → timeout fires → "Generation failed, try again?" |
+| MCP server not configured | Image generation features hidden (nav item doesn't render) |
+| MCP server configured but fails to connect | "Image generation unavailable" message in Images module. Rest of app unaffected |
+| SQLite corrupt | Auto-detected on startup → deleted → rebuilt from filesystem |
+| posts/ folder empty or missing | Valid state. Library shows empty, calendar shows empty. No errors |
+
+### Event Bus Simplicity
+
+The event bus is the observer pattern in < 50 lines. Synchronous, in-process, no async queues, no message brokers. It's a dict of event_name → list of callback functions. `emit()` calls each synchronously. If a listener fails, it logs and continues. That's it.
+
+If contributors find the indirection confusing during early development, the event bus can be replaced with direct function calls and refactored back in later. It's a convenience, not load-bearing architecture.
+
+### Chat Component Reuse
+
+The chat UI (chat-bubble component + message list + input field + streaming handler) is a reusable Jinja2 partial + JS module. Used in:
+- Content/Create tab (main content creation)
+- Onboarding (guided setup)
+- Brand "Improve with AI" (opens inline chat panel on that page)
+
+Same component, different contexts. No duplication.
+
+---
+
 ## Future Extensibility
 
 Adding a new feature:
