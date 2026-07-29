@@ -95,27 +95,11 @@ def _get_nav_context(bridge: PostKitBridge) -> list[dict]:
     return groups
 
 
-def _get_credits_context() -> dict:
-    """Load credits/plan info from config."""
-    config = load_config()
-    plan = config.get("plan", {"name": "Free", "limit": 100})
-    usage = config.get("usage", {"count": 0})
-    limit = plan.get("limit", 100)
-    count = usage.get("count", 0)
-    return {
-        "plan_name": plan.get("name", "Free"),
-        "usage_count": count,
-        "usage_limit": limit,
-        "usage_percent": min(100, int(count / max(limit, 1) * 100)),
-    }
-
-
 def _page_context(bridge: PostKitBridge, current_page: str) -> dict:
     """Build the full template context for a page."""
     return {
         "nav_groups": _get_nav_context(bridge),
         "current_page": current_page,
-        **_get_credits_context(),
     }
 
 

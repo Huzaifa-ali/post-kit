@@ -24,12 +24,4 @@
     </div>
     {% endfor %}
   </nav>
-
-  <div class="p-4 border-t">
-    <div class="text-xs text-muted mb-1">{{ plan_name }}</div>
-    <div class="h-1.5 rounded-full bg-surface-raised overflow-hidden">
-      <div class="h-full bg-accent rounded-full" style="width: {{ usage_percent }}%"></div>
-    </div>
-    <div class="text-xs text-muted" style="margin-top: 0.25rem">{{ usage_count }} / {{ usage_limit }}</div>
-  </div>
 </aside>
