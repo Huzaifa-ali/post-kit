@@ -3,8 +3,8 @@
 {% block page_title %}Images{% endblock %}
 
 {% block content %}
-<section class="space-y-6">
-  <div class="flex gap-1 border-b">
+<section data-tabs class="space-y-6">
+  <div class="flex gap-1 border-b border-border">
     <button data-tab="library" class="px-4 py-2 text-sm font-medium" style="border-bottom: 2px solid var(--color-accent); color: var(--color-text-primary);">Library</button>
     <button data-tab="upload" class="px-4 py-2 text-sm font-medium text-secondary" style="border-bottom: 2px solid transparent;">Upload</button>
     <button data-tab="generate" class="px-4 py-2 text-sm font-medium text-secondary" style="border-bottom: 2px solid transparent;">Generate</button>
@@ -53,4 +53,8 @@
     </form>
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/static/js/tabs.js"></script>
 {% endblock %}

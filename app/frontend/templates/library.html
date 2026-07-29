@@ -5,7 +5,7 @@
 {% block content %}
 <section class="space-y-6">
   <div class="flex items-center gap-3">
-    <select data-filter="status" class="px-3 py-2 text-sm rounded-lg border bg-surface-raised text-primary">
+    <select data-filter="status" class="px-3 py-2 text-sm rounded-lg border border-border bg-surface-raised text-primary">
       <option value="">All statuses</option>
       <option value="idea">Idea</option>
       <option value="draft">Draft</option>
@@ -14,8 +14,8 @@
       <option value="archived">Archived</option>
     </select>
     <input type="search" data-search="posts" placeholder="Search posts..."
-           class="px-3 py-2 text-sm rounded-lg border bg-surface-raised text-primary"
-           style="flex: 1; max-width: 20rem; outline: none;">
+           class="flex-1 max-w-xs px-3 py-2 text-sm rounded-lg border border-border bg-surface-raised text-primary"
+           style="outline: none;">
   </div>
 
   <div data-post-list class="grid gap-4" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
@@ -30,4 +30,8 @@
     {% endif %}
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/static/js/library.js"></script>
 {% endblock %}
