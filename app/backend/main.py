@@ -15,6 +15,8 @@ from backend.core.database import init_db, is_index_stale
 from backend.modules.library.router import router as library_router
 from backend.modules.library import service as library_service
 from backend.modules.content.router import router as content_router
+from backend.modules.calendar.router import router as calendar_router
+from backend.modules.images.router import router as images_router
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +48,8 @@ app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR / "static")), name="
 
 app.include_router(library_router)
 app.include_router(content_router)
+app.include_router(calendar_router)
+app.include_router(images_router)
 
 
 def _get_nav_context(bridge: PostKitBridge) -> list[dict]:
