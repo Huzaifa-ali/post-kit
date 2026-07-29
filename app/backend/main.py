@@ -17,6 +17,7 @@ from backend.modules.library import service as library_service
 from backend.modules.content.router import router as content_router
 from backend.modules.calendar.router import router as calendar_router
 from backend.modules.images.router import router as images_router
+from backend.modules.brand.router import router as brand_router
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +51,7 @@ app.include_router(library_router)
 app.include_router(content_router)
 app.include_router(calendar_router)
 app.include_router(images_router)
+app.include_router(brand_router)
 
 
 def _get_nav_context(bridge: PostKitBridge) -> list[dict]:
