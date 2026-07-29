@@ -27,14 +27,24 @@ async def list_posts(
 
 @router.get("/posts/{post_id}")
 async def get_post(post_id: str) -> dict:
-    """Get a single post by ID with full file content."""
+    """Get a single post by ID with full file content rendered as HTML."""
+    import markdown
+
     post = await service.get_post_by_id(post_id)
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
     bridge = PostKitBridge(get_postkit_root())
     posts_path = bridge.get_posts_path()
-    content = service.read_post_content(posts_path, post["path"])
-    post["content"] = content or ""
+    raw_content = service.read_post_content(posts_path, post["path"])
+    post["raw_content"] = raw_content or ""
+
+    # Separate front-matter from body for display
+    metadata, body = service._extract_front_matter(raw_content or "")
+    post["metadata"] = metadata
+    post["body_html"] = markdown.markdown(
+        body,
+        extensions=["fenced_code", "tables", "nl2br"],
+    )
     return post
 
 

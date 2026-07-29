@@ -78,6 +78,14 @@ function showPostDetail(post) {
   const existing = document.querySelector('[data-post-modal]');
   if (existing) existing.remove();
 
+  // Build metadata pills
+  const metaItems = Object.entries(post.metadata || {})
+    .filter(([k]) => !['status', 'pillar', 'platform'].includes(k))
+    .map(([k, v]) => {
+      const val = Array.isArray(v) ? v.join(', ') : v;
+      return `<span class="inline-block text-xs px-2 py-0.5 rounded bg-surface-overlay text-secondary mr-1 mb-1"><strong>${escapeHtml(k)}:</strong> ${escapeHtml(String(val))}</span>`;
+    }).join('');
+
   const modal = document.createElement('div');
   modal.setAttribute('data-post-modal', '');
   modal.className = 'fixed inset-0 z-50 flex items-center justify-center';
@@ -96,8 +104,9 @@ function showPostDetail(post) {
         </div>
         <button data-action="close-post-modal" class="text-muted hover:text-primary text-lg px-2">&times;</button>
       </div>
-      <div class="p-4 overflow-y-auto" style="max-height:70vh;">
-        <pre class="text-sm text-primary whitespace-pre-wrap font-sans leading-relaxed">${escapeHtml(post.content || 'No content available.')}</pre>
+      ${metaItems ? `<div class="px-4 pt-3 flex flex-wrap">${metaItems}</div>` : ''}
+      <div class="p-4 overflow-y-auto prose-content" style="max-height:70vh;">
+        ${post.body_html || '<p class="text-muted">No content.</p>'}
       </div>
     </div>
   `;
