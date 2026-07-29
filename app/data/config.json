@@ -1,0 +1,14 @@
+{
+    "postkit_path": "..",
+    "adapter": "kiro",
+    "theme": "dark",
+    "plan": {
+        "name": "Free",
+        "limit": 100,
+        "period": "monthly"
+    },
+    "usage": {
+        "count": 0,
+        "reset_date": null
+    }
+}
