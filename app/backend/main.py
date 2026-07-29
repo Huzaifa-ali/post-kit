@@ -2,6 +2,7 @@
 
 import logging
 from contextlib import asynccontextmanager
+from datetime import datetime
 from pathlib import Path
 
 from fastapi import FastAPI, Request
@@ -16,8 +17,12 @@ from backend.modules.library.router import router as library_router
 from backend.modules.library import service as library_service
 from backend.modules.content.router import router as content_router
 from backend.modules.calendar.router import router as calendar_router
+from backend.modules.calendar import service as calendar_service
 from backend.modules.images.router import router as images_router
+from backend.modules.images import service as images_service
 from backend.modules.brand.router import router as brand_router
+from backend.modules.brand import service as brand_service
+from backend.mcp.registry import has_image_server
 
 logger = logging.getLogger(__name__)
 
@@ -62,8 +67,10 @@ def _get_nav_context(bridge: PostKitBridge) -> list[dict]:
         ]},
         {"label": "Manage", "items": [
             {"id": "library", "label": "Library", "icon": "📚", "url": "/library"},
+            {"id": "calendar", "label": "Calendar", "icon": "📅", "url": "/calendar"},
         ]},
         {"label": "Settings", "items": [
+            {"id": "brand", "label": "Brand", "icon": "🎨", "url": "/brand"},
             {"id": "settings", "label": "Settings", "icon": "⚙", "url": "/settings"},
         ]},
     ]
@@ -139,3 +146,44 @@ async def content_page(request: Request):
     bridge = PostKitBridge(get_postkit_root())
     context = {"adapter_available": False, **_page_context(bridge, "content")}
     return templates.TemplateResponse(request, "content.html", context)
+
+
+
+@app.get("/calendar")
+async def calendar_page(request: Request):
+    """Calendar page with month view and queue."""
+    bridge = PostKitBridge(get_postkit_root())
+    queue = await calendar_service.get_queue()
+    now = datetime.now()
+    context = {
+        "queue": queue,
+        "year": now.year,
+        "month_name": now.strftime("%B"),
+        **_page_context(bridge, "calendar"),
+    }
+    return templates.TemplateResponse(request, "calendar.html", context)
+
+
+@app.get("/images")
+async def images_page(request: Request):
+    """Images page with media library."""
+    bridge = PostKitBridge(get_postkit_root())
+    images = images_service.list_images()
+    context = {
+        "images": images,
+        "mcp_available": has_image_server(),
+        **_page_context(bridge, "images"),
+    }
+    return templates.TemplateResponse(request, "images.html", context)
+
+
+@app.get("/brand")
+async def brand_page(request: Request):
+    """Brand page for niche file editing."""
+    bridge = PostKitBridge(get_postkit_root())
+    niche_files = brand_service.list_niche_files(bridge)
+    context = {
+        "niche_files": niche_files,
+        **_page_context(bridge, "brand"),
+    }
+    return templates.TemplateResponse(request, "brand.html", context)

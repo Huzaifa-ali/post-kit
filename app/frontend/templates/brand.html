@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Brand — post-kit{% endblock %}
+{% block page_title %}Brand{% endblock %}
+
+{% block content %}
+<section class="space-y-6">
+  <p class="text-secondary text-sm">Your niche identity files. Edit directly or use AI to improve.</p>
+
+  <div class="space-y-3">
+    {% for file in niche_files %}
+      <div class="rounded-lg border p-4 bg-surface-raised" data-file="{{ file.filename }}">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-medium text-primary">{{ file.filename }}</h3>
+            <p class="text-xs text-muted" style="margin-top: 0.125rem;">{{ file.summary }}</p>
+          </div>
+          <button data-action="edit-file" data-filename="{{ file.filename }}"
+                  class="px-3 py-1 rounded-lg border text-xs text-secondary hover:text-primary hover:bg-surface-overlay transition-colors">
+            Edit
+          </button>
+        </div>
+      </div>
+    {% endfor %}
+
+    {% if not niche_files %}
+      <p class="text-secondary" style="text-align: center; padding: 2rem 0;">No niche files found. Run onboarding first.</p>
+    {% endif %}
+  </div>
+
+  <!-- Editor modal -->
+  <div data-editor-modal class="hidden fixed inset-0 z-50 flex items-center justify-center">
+    <div class="absolute inset-0" style="background: rgba(0,0,0,0.5)" data-action="close-editor"></div>
+    <div class="relative w-full border rounded-xl overflow-hidden" style="max-width: 48rem; max-height: 80vh; background: var(--color-surface-raised); box-shadow: var(--shadow-overlay);">
+      <div class="flex items-center justify-between p-4 border-b">
+        <h3 class="text-sm font-semibold" data-editor-filename></h3>
+        <button data-action="save-file" class="px-3 py-1 rounded-lg bg-accent text-white text-xs font-medium hover:bg-accent-hover transition-colors">
+          Save
+        </button>
+      </div>
+      <textarea data-editor-content style="width: 100%; padding: 1rem; background: var(--color-surface); color: var(--color-text-primary); font-size: 0.875rem; font-family: var(--font-mono); outline: none; min-height: 50vh; resize: none; border: none;"></textarea>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="/static/js/editor.js"></script>
+{% endblock %}
