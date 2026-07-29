@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Settings — post-kit{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% block content %}
+<section class="space-y-6">
+  <!-- Adapter -->
+  <div class="rounded-lg border p-4 bg-surface-raised">
+    <h3 class="text-sm font-semibold mb-3">AI Adapter</h3>
+    <select data-setting="adapter" class="px-3 py-2 text-sm rounded-lg border bg-surface text-primary">
+      <option value="kiro" {% if config.adapter == 'kiro' %}selected{% endif %}>Kiro CLI</option>
+      <option value="claude" {% if config.adapter == 'claude' %}selected{% endif %}>Claude Code</option>
+    </select>
+  </div>
+
+  <!-- Post-kit path -->
+  <div class="rounded-lg border p-4 bg-surface-raised">
+    <h3 class="text-sm font-semibold mb-3">Post-kit Directory</h3>
+    <input type="text" data-setting="postkit_path" value="{{ config.postkit_path }}"
+           class="w-full px-3 py-2 text-sm rounded-lg border bg-surface text-primary" style="outline: none;">
+  </div>
+
+  <!-- Version -->
+  <div class="rounded-lg border p-4 bg-surface-raised">
+    <h3 class="text-sm font-semibold mb-3">Version</h3>
+    <div class="flex items-center gap-4">
+      <span class="text-sm text-secondary">post-kit: <strong class="text-primary">{{ postkit_version or 'unknown' }}</strong></span>
+      <span class="text-sm text-secondary">Your niche: <strong class="text-primary">{{ niche_version or 'unknown' }}</strong></span>
+      {% if is_update_available %}
+        <span class="text-xs px-2 py-1 rounded-full" style="background: var(--color-status-draft); color: white;">Update available</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Theme -->
+  <div class="rounded-lg border p-4 bg-surface-raised">
+    <h3 class="text-sm font-semibold mb-3">Theme</h3>
+    <select data-setting="theme" class="px-3 py-2 text-sm rounded-lg border bg-surface text-primary">
+      <option value="dark" {% if config.theme == 'dark' %}selected{% endif %}>Dark</option>
+      <option value="light" {% if config.theme == 'light' %}selected{% endif %}>Light</option>
+    </select>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex gap-3">
+    <button data-action="save-settings" class="px-4 py-2 rounded-lg bg-accent text-white text-sm font-medium hover:bg-accent-hover transition-colors">
+      Save Settings
+    </button>
+    <button data-action="rebuild-index" class="px-4 py-2 rounded-lg border text-sm text-secondary hover:text-primary hover:bg-surface-overlay transition-colors">
+      Rebuild Index
+    </button>
+  </div>
+  <p data-settings-status class="text-xs text-muted"></p>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="module">
+import { api, $ } from '/static/js/app.js';
+
+$('[data-action="save-settings"]')?.addEventListener('click', async () => {
+  const adapter = $('[data-setting="adapter"]')?.value;
+  const postkit_path = $('[data-setting="postkit_path"]')?.value;
+  const theme = $('[data-setting="theme"]')?.value;
+  await api('/settings', {
+    method: 'PUT',
+    body: JSON.stringify({ adapter, postkit_path, theme }),
+  });
+  const status = $('[data-settings-status]');
+  if (status) status.textContent = 'Settings saved.';
+});
+
+$('[data-action="rebuild-index"]')?.addEventListener('click', async () => {
+  const status = $('[data-settings-status]');
+  if (status) status.textContent = 'Rebuilding...';
+  const result = await api('/settings/rebuild', { method: 'POST' });
+  if (status) status.textContent = `Rebuilt ${result.rebuilt} posts.`;
+});
+</script>
+{% endblock %}

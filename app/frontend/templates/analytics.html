@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Analytics — post-kit{% endblock %}
+{% block page_title %}Analytics{% endblock %}
+
+{% block content %}
+<section class="space-y-6">
+  <!-- Import section -->
+  <div class="rounded-lg border p-4 bg-surface-raised">
+    <h3 class="text-sm font-semibold mb-3">Import Data</h3>
+    <form data-import-form class="flex items-center gap-3">
+      <input type="file" data-file-input accept=".csv,.xlsx,.xls" class="text-sm text-secondary">
+      <button type="submit" class="px-4 py-2 rounded-lg bg-accent text-white text-sm font-medium hover:bg-accent-hover transition-colors">
+        Import
+      </button>
+    </form>
+    <p data-import-status class="text-xs text-muted" style="margin-top: 0.5rem;"></p>
+  </div>
+
+  <!-- Dashboard section -->
+  <div class="rounded-lg border p-4 bg-surface-raised">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-sm font-semibold">Dashboard</h3>
+      <a href="/api/analytics/export" class="px-3 py-1 rounded-lg border text-xs text-secondary hover:text-primary hover:bg-surface-overlay transition-colors">
+        Export CSV
+      </a>
+    </div>
+
+    {% if dashboard.total_posts > 0 %}
+      <div class="mb-3">
+        <span class="text-xs text-muted">Total records: {{ dashboard.total_posts }}</span>
+        <span class="text-xs text-muted" style="margin-left: 1rem;">Columns: {{ dashboard.columns | join(", ") }}</span>
+      </div>
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.75rem;">
+          <thead>
+            <tr>
+              {% for col in dashboard.columns %}
+                <th style="text-align: left; padding: 0.5rem; border-bottom: 1px solid var(--color-border); color: var(--color-text-secondary);">{{ col }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in dashboard.data[:20] %}
+              <tr>
+                {% for col in dashboard.columns %}
+                  <td style="padding: 0.5rem; border-bottom: 1px solid var(--color-border-subtle); color: var(--color-text-primary);">{{ row.get(col, "") }}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if dashboard.total_posts > 20 %}
+        <p class="text-xs text-muted" style="margin-top: 0.5rem;">Showing 20 of {{ dashboard.total_posts }} records. Export for full data.</p>
+      {% endif %}
+    {% else %}
+      <p class="text-secondary text-sm" style="text-align: center; padding: 2rem 0;">No analytics data yet. Import a CSV from your platform.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script type="module">
+import { $ } from '/static/js/app.js';
+
+const form = $('[data-import-form]');
+const status = $('[data-import-status]');
+
+if (form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = form.querySelector('[data-file-input]');
+    if (!input?.files?.length) return;
+
+    const formData = new FormData();
+    formData.append('file', input.files[0]);
+
+    try {
+      const res = await fetch('/api/analytics/import', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (res.ok) {
+        if (status) status.textContent = `Imported ${data.rows_imported} rows. Reloading...`;
+        setTimeout(() => window.location.reload(), 1000);
+      } else {
+        if (status) status.textContent = `Error: ${data.detail}`;
+      }
+    } catch (err) {
+      if (status) status.textContent = `Error: ${err.message}`;
+    }
+  });
+}
+</script>
+{% endblock %}

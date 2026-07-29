@@ -23,6 +23,7 @@ from backend.modules.images import service as images_service
 from backend.modules.brand.router import router as brand_router
 from backend.modules.brand import service as brand_service
 from backend.modules.analytics.router import router as analytics_router
+from backend.modules.analytics import service as analytics_service
 from backend.modules.credits.router import router as credits_router
 from backend.modules.notifications.router import router as notifications_router
 from backend.modules.settings.router import router as settings_router
@@ -195,3 +196,30 @@ async def brand_page(request: Request):
         **_page_context(bridge, "brand"),
     }
     return templates.TemplateResponse(request, "brand.html", context)
+
+
+@app.get("/analytics")
+async def analytics_page(request: Request):
+    """Analytics dashboard page."""
+    bridge = PostKitBridge(get_postkit_root())
+    dashboard = await analytics_service.get_dashboard_data()
+    context = {
+        "dashboard": dashboard,
+        **_page_context(bridge, "analytics"),
+    }
+    return templates.TemplateResponse(request, "analytics.html", context)
+
+
+@app.get("/settings")
+async def settings_page(request: Request):
+    """Settings page."""
+    bridge = PostKitBridge(get_postkit_root())
+    config = load_config()
+    context = {
+        "config": config,
+        "postkit_version": bridge.get_version(),
+        "niche_version": bridge.get_niche_version(),
+        "is_update_available": bridge.get_version() != bridge.get_niche_version(),
+        **_page_context(bridge, "settings"),
+    }
+    return templates.TemplateResponse(request, "settings.html", context)
