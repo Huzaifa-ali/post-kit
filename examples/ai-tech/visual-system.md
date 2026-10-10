@@ -17,11 +17,13 @@
 
 ## Media Selection Order
 
+Real media beats generated — a real screenshot can't look AI-averaged.
+
 1. Real screenshot of actual thing discussed
 2. Sourced meme from Instagram/Reddit (meme posts only)
 3. Stock photo/video (Pexels, Unsplash)
-4. Simple text card (dark bg + white text)
-5. AI-generated (LAST RESORT — provide prompts for user)
+4. Simple text card (named dark bg + readable text)
+5. AI-generated (LAST RESORT — prompts must pass the slop check: no vibe adjectives, named background, specific detail baked in, exact text quoted)
 
 ## Specs
 

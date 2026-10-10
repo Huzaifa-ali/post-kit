@@ -173,6 +173,8 @@ Beyond general anti-AI rules, avoid these on X:
 - Generic engagement pod activity (Grox spam classifier detects coordinated low-follower replies)
 - Buying followers that don't engage (lowers your engagement rate, which the algorithm reads as "shown and ignored")
 
+**On the reply-generating patterns above:** use them, but don't run the same one every day — "Hot take: [X]. But here's why..." as a daily skeleton reads as AI and the Grox classifier is tuned for exactly these repeated templates. The reply they generate still has to be earned with a specific, arguable claim. "Tool X is better than Y" generates nothing; "Claude is better than GPT for refactoring because it holds 10 files in context without losing the thread" generates a fight. Specificity is what makes a post arguable — vague takes get scrolled past.
+
 ---
 
 ## Key Differences from LinkedIn

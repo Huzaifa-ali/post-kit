@@ -97,6 +97,8 @@ Here's what I found trending in [niche] today:
 Which one do you want to post about? Or should I look for something else?
 ```
 
+**The "why it matters" line must be specific, not generic.** "This is a big deal for the industry" is slop — it fits any topic. Give the actual reason: the number, the second-order effect, who it hurts/helps. "Why it matters: it's 9x cheaper than the incumbent and the weights are already on HuggingFace" tells the user something. Run each line through the generic test before presenting.
+
 ---
 
 ## Deep Research
@@ -107,7 +109,9 @@ Once the user picks a topic:
 3. Find specific data points (numbers, dates, names, quotes)
 4. Check what angle hasn't been covered yet (your unique take)
 
-Hand all research to the pipeline for writing.
+**The angle is the single biggest slop lever here.** A generic angle produces a generic post no matter how well it's written. "Company X launched model Y" is the take everyone posts — discard it. Find the angle nobody else is leading with: the buried number in the announcement, the contradiction between what they said and did, the second-order effect (who this quietly hurts), or who shipped it first with no credit. If you can't name an angle that isn't the obvious headline, this topic isn't worth a post yet.
+
+Hand all research to the pipeline for writing — including the specific data points, so the writer has real numbers to anchor the post instead of reaching for vague claims.
 
 ---
 

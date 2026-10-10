@@ -92,6 +92,19 @@ Show them the before/after:
 
 ---
 
+## When the Complaint Is "My Content Sounds Like AI"
+
+This is the most common brainstorm request. Do NOT reach for a bigger banned-word list — that's the shallow fix that doesn't work. Diagnose structurally, in this order:
+
+1. **Specificity first.** Pull their recent posts. Are they full of vague quantifiers ("many", "a lot", "huge") and abstract claims? That's the #1 cause. The fix is real numbers, names, and the generic test (could this line sit under a different topic?). Point to `anti-ai-writing.md` Layer 4.
+2. **Opinion.** Are the posts balanced mush with no committed take? Slop is agreeable and forgettable. Push them to pick a side.
+3. **Structure/rhythm.** Same hook skeleton every day? Same caption menu on rotation? Templated structure reads as AI even with good words. Vary it.
+4. **Images (if visual-first).** Often the real culprit isn't the text — it's a vague image prompt producing the generic AI-image look. Check `image-prompts.md` and whether their prompts carry a specific detail and a named background.
+
+Only after those four should word choice come up. Tell them this directly — most people are stuck on the word list and that's exactly why their output still reads as AI.
+
+---
+
 ## Adding New Modules
 
 If during brainstorming the user says they want a capability that requires a module they don't have:
