@@ -12,14 +12,16 @@ Every post gets a visual recommendation. The AI decides what type of visual fits
 
 ## Visual Selection Priority
 
-Choose visuals in this order (first match wins):
+**Real media beats generated media every time it exists.** A real screenshot is specific by definition and can't look AI-averaged. A generated image has to earn its specificity through a tight brief. Choose in this order (first match wins):
 
 1. **Real screenshot** of the actual thing being discussed (product, pricing page, UI, tweet, repo)
 2. **Sourced image** from relevant communities (for memes/reactions)
 3. **Stock photo/video** from free sources (Pexels, Unsplash, Pixabay)
-4. **Simple text card** (dark background + white text, for data or quotes)
-5. **AI-generated image** (LAST RESORT — provide prompts for the user to generate themselves)
+4. **Simple text card** (named dark background + readable text, for data or quotes)
+5. **AI-generated image** (LAST RESORT — provide prompts for the user that pass the slop check in `image-prompts.md`)
 6. **No image** — if the post is pure opinion/text and works better without one
+
+When you reach step 4 or 5, the prompt must pass the image-prompts slop check: no vibe adjectives, a named exact background, the specific detail baked in, exact text quoted. A vague prompt averages into the generic AI-image look.
 
 ---
 
@@ -84,7 +86,7 @@ Every post with a visual should include:
 **Status:** [Ready / User needs to create]
 ```
 
-If AI-generated, provide the prompt for the user.
+If AI-generated, provide the prompt for the user — and make sure it passes the slop check in `image-prompts.md` (no vibe adjectives, named background, specific detail baked in, exact text quoted).
 
 ---
 

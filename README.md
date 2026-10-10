@@ -60,7 +60,15 @@ It's worth noting that in today's rapidly evolving fitness landscape, leveraging
 </tr>
 </table>
 
-The anti-AI pass runs on **every** post. It catches 50+ banned words, AI sentence patterns, hedging language, and robotic structure — then rewrites until it sounds like a human wrote it.
+The anti-AI pass runs on **every** post. It's a structural rewrite, not a find-and-replace, working in **five layers** from shallow to deep:
+
+1. **Word choice** — swap the statistical fingerprint words (delve, leverage, robust…). The shallow layer.
+2. **Sentence rhythm** — vary length and openings so it doesn't read like a template.
+3. **Transitions** — kill "However / Moreover / Furthermore"; use human connectors or none.
+4. **Specificity** — _where slop actually dies._ Vague quantifiers → real numbers, abstract nouns → concrete things, every line must pass the generic test.
+5. **Thinking patterns** — commit to an opinion, drop false balance, no hedged mush.
+
+It does **not** police em dashes — those aren't an AI tell (Twain and GPT-4.1 use them at nearly the same rate). It judges structure, not punctuation.
 
 ---
 
@@ -69,8 +77,10 @@ The anti-AI pass runs on **every** post. It catches 50+ banned words, AI sentenc
 | Feature | What it does |
 |---------|-------------|
 | 🎙️ **Voice matching** | Learns how you sound — posts read like YOU wrote them |
-| 🚫 **Anti-AI filter** | Automatically removes robotic language, every post, no exceptions |
+| 🚫 **Anti-AI filter** | Five-layer structural rewrite on every post — words, rhythm, transitions, specificity, and thinking |
+| 🎯 **The generic test** | Flags any line that could survive a topic change and forces a real number, name, or fact in its place |
 | 🔍 **Smart research** | Multi-angle web search with source triage, cross-validation, and citation — no MCPs needed |
+| 🖼️ **Image-tool aware** | Tunes image prompts to your tool (ChatGPT, Nano Banana, Midjourney…) and slop-checks every prompt |
 | 📦 **Modular** | Only enable what you need (visuals, memes, news, video, analytics) |
 | 📱 **Multi-platform** | LinkedIn, X, YouTube, Newsletter — one post adapts to many |
 | ⚡ **5-minute setup** | Guided onboarding — answer 10 questions, start posting immediately |
@@ -160,8 +170,8 @@ Every post goes through this pipeline automatically:
 2. **Research** — Multi-angle web search with intent classification, source triage, and cross-validation (powered by `engine/core/web-research.md`)
 3. **Write** — Drafts following your content rules (length, structure, hooks)
 4. **Voice Pass** — Rewrites to match YOUR voice profile
-5. **Anti-AI Pass** — Strips banned words, AI patterns, robotic structure _(mandatory, always on)_
-6. **Quality Gate** — Checks hook strength, one-idea rule, save/share test, platform compliance
+5. **Anti-AI Pass** — Five-layer structural rewrite: word choice, sentence rhythm, transitions, specificity (the generic test), and thinking patterns _(mandatory, always on)_
+6. **Quality Gate** — Checks hook strength, one-idea rule, save/share test, specificity, visual anti-slop, and platform compliance
 7. **Output** — Saves to `posts/` with metadata, ready to publish
 
 ---
@@ -309,6 +319,8 @@ See [docs/contributing.md](docs/contributing.md) for guidelines.
 - [x] LinkedIn platform support
 - [x] X (Twitter) platform support
 - [x] 8 optional modules (news, memes, visuals, video, carousel, analytics, repurpose, image prompts)
+- [x] Five-layer anti-AI pass with the generic test (specificity + visual anti-slop quality gates)
+- [x] Image-tool-aware onboarding and prompt tuning (ChatGPT, Nano Banana, Midjourney, etc.)
 - [ ] Community niche packs (fitness, crypto, SaaS, real estate, marketing)
 - [ ] YouTube Community platform file
 - [ ] Newsletter platform file

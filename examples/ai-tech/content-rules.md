@@ -30,6 +30,11 @@ If the visual carries the content, text should be SHORT.
 - CTA invites disagreement or experience-sharing
 - Links in comments only
 - Pass: "Would someone save this?" OR "Would someone share this?"
+- Pass the generic test (below)
+
+## The Generic Test
+
+Could this exact line sit under a post about a completely different topic? If yes, it's slop filler. Replace it with the specific number, name, or fact that makes it about THIS story. "This is huge" works for anything — "$544 vs $4,811, same task" works for exactly one story. Specific beats clever. Applies to captions AND any text baked into an image.
 
 ## No Company Bias
 

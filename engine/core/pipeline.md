@@ -154,14 +154,21 @@ If it doesn't pass, rewrite until it does.
 
 ## Step 4: Anti-AI Pass (Mandatory)
 
-Read `engine/core/anti-ai-writing.md` and run the full check.
+Read `engine/core/anti-ai-writing.md` and run the full five-layer check.
 
 This step is ALWAYS active. It cannot be disabled. Every post must pass.
 
-- Remove banned words
-- Remove banned patterns
-- Check for AI-sounding structure
-- Make it sound human
+This is a **structural rewrite pass, not a find-and-replace.** Deleting banned words is the shallowest layer and does not make writing human on its own. Work the layers in order:
+
+1. **Specificity** — vague quantifiers → real numbers; abstract claims → concrete things; pass the generic test (no line could belong to a different topic)
+2. **Thinking** — commit to an opinion, no balanced mush, no false balance
+3. **Patterns** — kill negation-affirmation, triads, puffery, drama openers, takeaway closers, hedge-stacking
+4. **Rhythm** — vary sentence length and openings; read aloud
+5. **Transitions** — replace "However/Moreover/Furthermore" with human connectors or nothing
+6. **Words** — swap the Layer 1 fingerprint words (last, it's the easy part)
+7. **Visual** — if the post has a generated image, run its slop check too (a slop image sinks a good caption)
+
+Do NOT police em dashes — they are not an AI tell. Judge structure, not punctuation.
 
 ---
 
@@ -180,7 +187,7 @@ The post must pass ALL gates to be published. If it fails any gate, revise and r
    - **No extra subfolders** inside the month folder (no `daily/`, `news/`, `github/`)
    - Every post goes flat inside the month, identified by its date-slug folder
 3. Save the post as `linkedin-post.md` (or `x-post.md` if platform-specific)
-4. If image-prompts module is active, include 3 AI image prompts in the post file
+4. If image-prompts module is active, include 3 AI image prompts in the post file — each prompt must pass the slop check in `image-prompts.md` (no vibe words, named background, specific detail baked in, exact text quoted). Prefer a real screenshot over any generated card when the real thing exists.
 5. If github-screenshot module is active and this is a repo post, capture/provide screenshot
 6. Present the final post to the user for approval
 

@@ -174,3 +174,5 @@ Beyond the general anti-AI rules, avoid these LinkedIn-specific patterns:
 - Starting with "So..." on every post
 - Ending every post with "Agree?" or "Thoughts?"
 - Engagement pods (LinkedIn detects and suppresses)
+
+**On the hook and CTA patterns above:** they're starting points, not fill-in templates. The fastest way to look like AI on LinkedIn is to run the same hook skeleton every day ("Everyone's celebrating X. I think it's a problem." for every post). Rotate them, and always fill them with a specific number/name/fact — a hook that passes the generic test ("$544 vs $4,811, same task") beats any hook formula. If your last three posts opened the same way, change the structure.

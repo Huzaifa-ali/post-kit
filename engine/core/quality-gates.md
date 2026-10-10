@@ -67,19 +67,32 @@ The post must pass at least one of these:
 
 ## Gate 5: Anti-AI Cleanliness
 
-The post must have passed through `engine/core/anti-ai-writing.md` with zero violations remaining.
+The post must have passed through `engine/core/anti-ai-writing.md`, all five layers, with zero violations remaining.
 
 **Pass if:**
-- No banned words
-- No banned patterns
-- Em dashes used sparingly (max ~2 per post) — part of the real voice, but not stacked or used as a crutch
-- Doesn't read like AI output
-- Has personality and irregular rhythm
+- No Layer 1 words
+- No banned structural patterns (negation-affirmation, triads, puffery, drama openers, takeaway closers, hollow framing, hedge-stacking)
+- Varied sentence rhythm and openings — reads aloud like a person, not a template
+- Transitions are human (not "However/Moreover/Furthermore")
+- Has a committed opinion, not balanced mush
 - Uses contractions naturally (don't, won't, it's)
 
-**Fail if:** Any banned word or pattern remains, OR more than ~2 em dashes appear, OR the "it's not X — it's Y" reframe shows up more than once. Run anti-AI pass again.
+**Fail if:** Any banned word or structural pattern remains, OR the "it's not X, it's Y" reframe appears more than once, OR the reasoning is suspiciously clean and non-committal. Run the anti-AI pass again.
 
-**Common miss:** Em dashes stack up fast. Count them. Two is fine (it's the voice). Three or more, cut the weakest to a period or comma. The reframe inversion belongs in the quoted-opinion line only, not every paragraph.
+**Note on em dashes:** they are NOT an AI tell (Twain and GPT-4.1 use them at nearly identical rates). Do not police them. Use them where they help. Judge the *structure*, not the punctuation.
+
+---
+
+## Gate 5b: Specificity (the highest-leverage structural gate)
+
+The strongest single check for slop. Applies to the caption AND any text baked into the image.
+
+**Pass if:**
+- Vague quantifiers ("many", "most", "a lot", "several") are replaced with real numbers wherever possible
+- Abstract claims are anchored to concrete things (names, dates, versions, prices, screenshots)
+- The post passes **the generic test**: no line could be swapped into a post about a completely different topic unchanged
+
+**Fail if:** The post trades in generalities, or any sentence is so generic it would survive a topic change. Rewrite with the specific stat/name/fact that makes it about THIS story only.
 
 ---
 
@@ -112,6 +125,23 @@ The post must follow the active platform's rules.
 - Format appropriate for the platform?
 - Links handled correctly (in body vs. in comments)?
 - Hashtag count and placement correct?
+
+---
+
+## Gate 7b: Visual Anti-Slop (if the post has a generated image)
+
+For visual-first accounts the image IS the post — a slop image sinks a good caption. If the post uses an AI-generated visual, its prompt must pass the image-prompts slop check.
+
+**Pass if:**
+- The prompt contains no vibe adjectives ("beautiful", "sleek", "dramatic", "cinematic", "8K", "professional")
+- The specific stat/name/fact is baked into the image, not just the caption
+- Background is a named exact color/surface (no default gradient), styling is flat/intentional (no fake glow, no 3D unless deliberate)
+- In-image text is quoted, short, placed, with a "no other text" constraint
+- The prompt passes **the generic test** — it couldn't describe an image for a different topic
+
+**Fail if:** The prompt is vibe-driven, could produce the generic AI-image look, or a real screenshot exists that would beat it. Fix the prompt or switch to real media. See `image-prompts.md`.
+
+**Skip this gate if:** the post is text-only, or the visual is a real screenshot/sourced media (not generated).
 
 ---
 

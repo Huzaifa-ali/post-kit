@@ -17,6 +17,10 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Local agent tooling / scratch (not part of the framework)
+.kiro/settings/
+.superpowers/
+
 # Environment / API keys
 .env
 *.env.local

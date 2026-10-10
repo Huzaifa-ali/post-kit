@@ -19,9 +19,11 @@ Turn one piece of content into multiple platform-adapted versions. Write once, p
 2. Identify the core message (one sentence)
 3. For each target platform, rewrite following that platform's rules
 4. Run Voice Pass on each version
-5. Run Anti-AI Pass on each version
+5. Run Anti-AI Pass (all five layers) on each version
 6. Output all versions
 ```
+
+**Repurposing is where specifics get flattened into slop.** When you compress a LinkedIn post to an X post, the lazy move is to replace the concrete claim with a vague summary — "AI pricing is getting out of control" instead of "$544 vs $4,811, same task." Don't. Carry the specific numbers and names into every version. A shorter post is not a vaguer post. Each repurposed version must independently pass the generic test and the specificity gate — adaptation never strips the detail that made the original land.
 
 ---
 

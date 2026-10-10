@@ -71,6 +71,19 @@ Don't use carousels for:
 
 ---
 
+## Anti-Slop for Carousels
+
+Carousels are a slop magnet — the "5 things nobody told you about X" format invites filler, triads, and puffery. Every slide must earn its place.
+
+- **Each slide carries a specific fact, not a vibe.** A slide that says "Consistency is key" or "Quality matters" is a wasted slide. Replace it with the number, the name, the concrete example. Slide-level generic test: if the slide's text could appear in a carousel about a different topic, it's filler — cut it or make it specific.
+- **No manufactured round numbers.** Don't pad to "7 things" when you have 4 real ones. Four strong slides beat seven with filler. The count follows the content, not a headline template.
+- **Cover slide: a specific hook, not a formula.** "5 things nobody told you about [X]" is the single most overused AI-carousel opener. Lead with the surprising number or the real claim instead ("Claude costs 9x more than DeepSeek for the same task").
+- **Kill the puffery headlines.** "A game-changer", "the ultimate guide", "everything you need to know" — delete. State what the slide actually shows.
+- **Closing slide: no empty CTA.** "Follow for more!" on every carousel is noise. Earn the follow with the content; make the CTA specific to this carousel's topic when you use one.
+- **Visual slop applies too.** If slides are AI-generated, each prompt passes the `image-prompts.md` slop check (named background, no vibe adjectives, exact text quoted, specific detail baked in). Consistent layout across slides, but not the default AI-gradient look.
+
+---
+
 ## Output Format
 
 When creating carousel content, output:

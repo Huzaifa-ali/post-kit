@@ -90,6 +90,18 @@ For meme clips:
 
 ---
 
+## Anti-Slop for Video
+
+Video slop shows up in two places: the text overlays and the stock footage.
+
+- **The hook frame is a specific claim, not hype.** "Watch this!", "You won't believe this", "This changes everything" are empty — they'd open any video. Lead with the real detail: "$81K API bill in one week" / "This repo hit 12K stars in 3 days". Apply the generic test to frame 1.
+- **Overlay text follows the anti-AI rules.** No puffery ("game-changer"), no triads, no vague quantifiers. Real numbers and names. The specificity layer in `anti-ai-writing.md` applies to every frame.
+- **Stock footage: avoid the generic AI-era clichés.** Glowing blue "AI brain" renders, swirling particle networks, faceless hooded hacker, abstract data streams — these are the video equivalent of image slop. Prefer the real thing (screen recording of the actual tool, the real pricing page) or concrete, specific footage over abstract "tech" B-roll.
+- **If any frame is an AI-generated image/clip,** its prompt passes the `image-prompts.md` slop check.
+- **One real point beats motion graphics.** A plain screen recording that shows the actual thing outperforms a slick animated card that says nothing specific.
+
+---
+
 ## Output Format
 
 When creating video content, output:
